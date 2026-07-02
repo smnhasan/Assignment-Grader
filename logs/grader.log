@@ -170,3 +170,161 @@
 2026-07-02 09:29:43,507 [INFO] Loading FAISS index and chunks from data/faiss_index...
 2026-07-02 09:29:43,509 [INFO] Loaded FAISS index with 140 elements.
 2026-07-02 09:29:44,639 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:39:58,790 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:39:58,791 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:39:58,957 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:40:01,819 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:40:02,750 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-07-02 09:43:28,230 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:43:28,231 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:43:28,398 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:43:35,221 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-07-02 09:44:19,004 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:44:19,005 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:44:19,177 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:44:19,363 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-07-02 09:44:19,381 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-07-02 09:44:19,886 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:44:20,190 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-launched-telemetry "HTTP/1.1 200 OK"
+2026-07-02 09:44:20,808 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-07-02 09:44:49,794 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:44:49,796 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:44:49,971 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:44:50,154 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-07-02 09:44:50,171 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-07-02 09:44:56,568 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-launched-telemetry "HTTP/1.1 200 OK"
+2026-07-02 09:44:56,568 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:48:05,884 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:48:05,885 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:48:06,072 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:48:07,508 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:48:08,748 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-07-02 09:48:39,386 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:48:39,387 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:48:39,573 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:48:39,764 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-07-02 09:48:39,782 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-07-02 09:48:40,149 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:48:43,606 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-launched-telemetry "HTTP/1.1 200 OK"
+2026-07-02 09:50:40,382 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:50:40,383 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:50:40,561 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:51:16,605 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:51:16,607 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:51:16,785 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:51:17,669 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:51:19,103 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-07-02 09:52:23,466 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:52:23,467 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:52:23,640 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:52:23,828 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-07-02 09:52:23,847 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-07-02 09:52:31,092 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-launched-telemetry "HTTP/1.1 200 OK"
+2026-07-02 09:52:31,092 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:52:33,017 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-07-02 09:54:16,237 [INFO] UI triggered dynamic PDF grading for: Student A
+2026-07-02 09:54:16,252 [INFO] Starting dynamic grading for Student A...
+2026-07-02 09:54:16,253 [INFO] Using dynamic index directory: data/faiss_index_07ddccc006d7268333adb1d382d7bbf8 (file hash: 07ddccc006d7268333adb1d382d7bbf8)
+2026-07-02 09:54:16,260 [INFO] No existing FAISS index found on disk.
+2026-07-02 09:54:16,260 [INFO] Extracting text from /tmp/gradio/85ebb6f02218f9f55d1a90046fec0dc8a5cfb2d0e442ac8745e1c6d70fcab277/student_A.pdf...
+2026-07-02 09:54:16,265 [INFO] Extracted 2 pages from book.
+2026-07-02 09:54:16,266 [INFO] Chunking book pages (size=800, overlap=150)...
+2026-07-02 09:54:16,266 [INFO] Created 5 chunks from the book.
+2026-07-02 09:54:16,266 [INFO] Generating embeddings for all book chunks...
+2026-07-02 09:54:16,266 [INFO] Embedding batch 1/1...
+2026-07-02 09:54:18,191 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:18,195 [INFO] FAISS index and chunks metadata successfully saved to data/faiss_index_07ddccc006d7268333adb1d382d7bbf8.
+2026-07-02 09:54:18,195 [INFO] Extracting questions and rubric dynamically using LLM...
+2026-07-02 09:54:25,061 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:54:25,070 [INFO] Running prompt injection check...
+2026-07-02 09:54:28,130 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:54:28,132 [INFO] Prompt injection result: has_injection=False, reason=The submission contains only standard answers to questions about statistical learning (R2, Ridge/Lasso/ElasticNet, RANSAC, logistic regression, and scikit-learn’s C). There are no instructions attempting to override grading, no prompt-injection phrasing, and no commands or requests to the grader (e.g., to ignore rules, award full marks, or output specific text).
+2026-07-02 09:54:28,132 [INFO] Mapping student answers to questions dynamically using LLM...
+2026-07-02 09:54:30,282 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:54:30,283 [INFO] Retrieving book context for Q1 using query: 'web app interface submit Grade button results single page UI'...
+2026-07-02 09:54:31,093 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:31,094 [INFO] Retrieving book context for Q2 using query: 'vector database index book chunking embeddings similarity search'...
+2026-07-02 09:54:31,508 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:31,509 [INFO] Retrieving book context for Q3 using query: 'semantic search retrieve relevant passages answer embeddings top-k'...
+2026-07-02 09:54:31,913 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:31,915 [INFO] Retrieving book context for Q4 using query: 'rubric-based grading criteria scoring only textbook support justification citations'...
+2026-07-02 09:54:32,428 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:32,439 [INFO] Retrieving book context for Q5 using query: 'unsupported claims detection book not covered flag 'does not back' grading'...
+2026-07-02 09:54:33,044 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:33,046 [INFO] Retrieving book context for Q6 using query: 'grading report format per-criterion marks total feedback flag'...
+2026-07-02 09:54:33,671 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:33,673 [INFO] Retrieving book context for Q7 using query: 'grade all samples three student answers batch grading reports'...
+2026-07-02 09:54:34,280 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:34,282 [INFO] Retrieving book context for Q8 using query: 'agentic retrieval per-criterion search re-check loop rubric-driven'...
+2026-07-02 09:54:34,884 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:34,885 [INFO] Retrieving book context for Q9 using query: 'second pass checker review grading prompt injection defense ignore instructions full marks'...
+2026-07-02 09:54:35,517 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:35,518 [INFO] Retrieving book context for Q10 using query: 'full stack interface batch grading summary logging'...
+2026-07-02 09:54:35,819 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:54:35,821 [INFO] Running draft grading agent...
+2026-07-02 09:54:42,366 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:54:42,368 [INFO] Running checker/critic stage...
+2026-07-02 09:54:49,019 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:54:49,020 [INFO] Grading completed successfully for Student A. Total Score: 20
+2026-07-02 09:55:20,563 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 09:57:03,726 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 09:57:03,727 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 09:57:03,902 [INFO] Pre-calculated batch summary found. Ready for UI loading.
+2026-07-02 09:57:04,088 [INFO] HTTP Request: GET http://localhost:7860/gradio_api/startup-events "HTTP/1.1 200 OK"
+2026-07-02 09:57:04,107 [INFO] HTTP Request: HEAD http://localhost:7860/ "HTTP/1.1 200 OK"
+2026-07-02 09:57:04,587 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-initiated-analytics "HTTP/1.1 200 OK"
+2026-07-02 09:57:04,996 [INFO] HTTP Request: HEAD https://huggingface.co/api/telemetry/https%3A/api.gradio.app/gradio-launched-telemetry "HTTP/1.1 200 OK"
+2026-07-02 09:57:05,869 [INFO] HTTP Request: GET https://api.gradio.app/pkg-version "HTTP/1.1 200 OK"
+2026-07-02 09:58:09,548 [INFO] UI triggered dynamic PDF grading for: Nafew
+2026-07-02 09:58:09,560 [INFO] Starting dynamic grading for Nafew...
+2026-07-02 09:58:09,617 [INFO] Using dynamic index directory: data/faiss_index_e4bd6c5fc9a165924e90fe9e6c9b7d9e (file hash: e4bd6c5fc9a165924e90fe9e6c9b7d9e)
+2026-07-02 09:58:09,623 [INFO] No existing FAISS index found on disk.
+2026-07-02 09:58:09,624 [INFO] Extracting text from /tmp/gradio/e786cc3488049170223e29af16077ef9a3e0b27f6009544d98c8e0fce6ed3f17/machine-learning-algorithms_text-book-partial.pdf...
+2026-07-02 09:59:16,117 [INFO] Extracted 65 pages from book.
+2026-07-02 09:59:16,117 [INFO] Chunking book pages (size=800, overlap=150)...
+2026-07-02 09:59:16,118 [INFO] Created 140 chunks from the book.
+2026-07-02 09:59:16,118 [INFO] Generating embeddings for all book chunks...
+2026-07-02 09:59:16,118 [INFO] Embedding batch 1/2...
+2026-07-02 09:59:23,849 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:59:26,118 [INFO] Embedding batch 2/2...
+2026-07-02 09:59:27,234 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:59:27,853 [INFO] FAISS index and chunks metadata successfully saved to data/faiss_index_e4bd6c5fc9a165924e90fe9e6c9b7d9e.
+2026-07-02 09:59:27,855 [INFO] Extracting questions and rubric dynamically using LLM...
+2026-07-02 09:59:33,102 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:59:33,111 [INFO] Running prompt injection check...
+2026-07-02 09:59:35,518 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:59:35,520 [INFO] Prompt injection result: has_injection=False, reason=The submission contains only answers to course questions about machine learning concepts. There are no instructions attempting to override the grading system, no requests to ignore rules, and no commands specifying what the grader should output. No prompt-injection or grading-manipulation content is present.
+2026-07-02 09:59:35,520 [INFO] Mapping student answers to questions dynamically using LLM...
+2026-07-02 09:59:37,956 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:59:37,958 [INFO] Retrieving book context for Q1 using query: 'coefficient of determination R^2 measure meaning values close to 1 close to 0 negative interpretation'...
+2026-07-02 09:59:38,590 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:59:38,594 [INFO] Retrieving book context for Q2 using query: 'Ridge L2 regularization penalizes L2 norm effect on weights shrinkage; Lasso L1 regularization penalizes L1 norm sparsity feature selection; ElasticNet combination L1 and L2 norm effect'...
+2026-07-02 09:59:39,346 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:59:39,348 [INFO] Retrieving book context for Q3 using query: 'RANSAC linear regression outliers robust estimation how it works random sampling consensus inliers model fitting'...
+2026-07-02 09:59:39,818 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:59:39,819 [INFO] Retrieving book context for Q4 using query: 'logistic regression classification method sigmoid function outputs probabilities decision boundary log-odds'...
+2026-07-02 09:59:41,980 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:59:42,029 [INFO] Retrieving book context for Q5 using query: 'scikit-learn LogisticRegression parameter C meaning inverse regularization strength larger C smaller C effect regularization'...
+2026-07-02 09:59:42,949 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-07-02 09:59:42,950 [INFO] Running draft grading agent...
+2026-07-02 09:59:54,092 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 09:59:54,093 [INFO] Running checker/critic stage...
+2026-07-02 10:00:05,351 [INFO] HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-07-02 10:00:05,352 [INFO] Grading completed successfully for Nafew. Total Score: 71
+2026-07-02 10:00:29,592 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:36,971 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:37,614 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:37,788 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:37,938 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:38,082 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:38,261 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:38,441 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:42,331 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:42,618 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:43,028 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:43,207 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:00:47,607 [INFO] UI triggered Batch Grading Dashboard view
+2026-07-02 10:01:11,230 [INFO] UI book search query: 'What is L1 loss?' (K=4)
+2026-07-02 10:01:11,231 [INFO] Loading FAISS index and chunks from data/faiss_index...
+2026-07-02 10:01:11,231 [INFO] Loaded FAISS index with 140 elements.
+2026-07-02 10:01:12,134 [INFO] HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"

@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+conda-env/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment/API Keys
+.env
+
+# Project specific data and indices
+data/faiss_index_*
+logs/
+reports/dynamic_*
+
+# IDEs and System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.ipynb_checkpoints/

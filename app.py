@@ -143,6 +143,145 @@ def grade_handler(student_name, student_text):
             f"Error details: {e}"
         )
 
+def dynamic_grade_handler(student_name, book_file, question_file, student_file):
+    """Dynamic PDF grading handler."""
+    if not book_file:
+        return (
+            "<div style='color: red;'>Please upload a Textbook PDF.</div>",
+            "### Error: Missing Textbook PDF",
+            "Please upload the textbook PDF."
+        )
+    if not question_file:
+        return (
+            "<div style='color: red;'>Please upload a Questions/Rubric PDF.</div>",
+            "### Error: Missing Questions PDF",
+            "Please upload the questions/rubric PDF."
+        )
+    if not student_file:
+        return (
+            "<div style='color: red;'>Please upload the Student Submission PDF.</div>",
+            "### Error: Missing Student Submission PDF",
+            "Please upload the student's submission PDF."
+        )
+        
+    logger.info(f"UI triggered dynamic PDF grading for: {student_name}")
+    try:
+        # Extract question text from the question PDF
+        question_text = extract_pdf_text(question_file.name)
+        if not question_text.strip():
+            raise ValueError("Could not extract any text from the Questions PDF.")
+            
+        # Extract student submission text from the student PDF
+        student_text = extract_pdf_text(student_file.name)
+        if not student_text.strip():
+            raise ValueError("Could not extract any text from the Student Submission PDF.")
+            
+        # Run dynamic grader
+        report = grader.grade_assignment_dynamic(
+            student_name=student_name,
+            student_text=student_text,
+            book_path=book_file.name,
+            questions_text=question_text
+        )
+        
+        # Save results locally to reports folder
+        os.makedirs("reports", exist_ok=True)
+        safe_name = student_name.replace(" ", "_")
+        
+        with open(f"reports/dynamic_{safe_name}_report.json", "w") as f:
+            json.dump(report, f, indent=2)
+            
+        md_content = grader.report_to_markdown(report)
+        with open(f"reports/dynamic_{safe_name}_report.md", "w") as f:
+            f.write(md_content)
+        
+        # Build HTML score card
+        score = report.get("total_score", 0)
+        
+        # Get total max score from criteria (since criteria is dynamic now!)
+        criteria = report.get("criteria", {})
+        total_max_score = sum(data.get("max_score", 0) for data in criteria.values())
+        if total_max_score == 0:
+            total_max_score = 100
+            
+        score_pct = (score / total_max_score) * 100
+        
+        if score_pct >= 80:
+            color1, color2 = "#15803d", "#22c55e" # green
+            status = "Excellent / Pass"
+        elif score_pct >= 60:
+            color1, color2 = "#b45309", "#f59e0b" # yellow/orange
+            status = "Pass with feedback"
+        else:
+            color1, color2 = "#b91c1c", "#ef4444" # red
+            status = "Needs Improvement"
+            
+        score_card_html = f"""
+        <div style="background: linear-gradient(135deg, {color1}, {color2}); color: white; padding: 25px; border-radius: 16px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); margin-bottom: 20px;">
+            <h3 style="margin: 0; font-size: 1.2em; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.05em;">Grading Complete</h3>
+            <h1 style="margin: 10px 0; font-size: 3.5em; font-weight: 800; line-height: 1;">{score} <span style="font-size: 0.4em; font-weight: 400; opacity: 0.8;">/ {total_max_score}</span></h1>
+            <p style="margin: 0; font-size: 1.1em; font-weight: 600; letter-spacing: 0.02em;">{status}</p>
+        </div>
+        """
+        
+        # Build individual criteria bars
+        score_card_html += "<div style='background: rgba(30, 41, 59, 0.5); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);'>"
+        score_card_html += "<h4 style='margin: 0 0 10px 0; color: #94a3b8; font-size: 0.9em; text-transform: uppercase;'>Criterion Breakdown</h4>"
+        
+        for key, data in criteria.items():
+            c_score = data.get("score", 0)
+            c_max = data.get("max_score", 100)
+            pct = (c_score / c_max) * 100 if c_max > 0 else 0
+            display_name = key.replace("_", " ").title()
+            
+            score_card_html += f"""
+            <div style="margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 4px;">
+                    <span style="font-weight: 500; color: #e2e8f0;">{display_name}</span>
+                    <span style="font-weight: bold; color: #e2e8f0;">{c_score}/{c_max}</span>
+                </div>
+                <div style="background: #334155; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="background: #3b82f6; width: {pct}%; height: 100%; border-radius: 4px;"></div>
+                </div>
+            </div>
+            """
+        score_card_html += "</div>"
+        
+        # Build Warning Flags Section
+        flags = report.get("flags", [])
+        flags_html = ""
+        if flags:
+            flags_html += "<div style='margin-top: 20px;'>"
+            flags_html += "<h4 style='color: #ef4444; font-weight: bold; font-size: 1.1em; margin-bottom: 10px;'>⚠️ Warning Flags / Auditing Alerts</h4>"
+            for f in flags:
+                is_crit = "Critical" in f or "injection" in f.lower()
+                border_col = "#ef4444" if is_crit else "#f97316"
+                bg_col = "rgba(239, 68, 68, 0.1)" if is_crit else "rgba(249, 115, 22, 0.1)"
+                txt_col = "#fca5a5" if is_crit else "#fed7aa"
+                
+                flags_html += f"""
+                <div style="border-left: 4px solid {border_col}; background: {bg_col}; padding: 12px; border-radius: 0 8px 8px 0; margin-bottom: 10px; font-size: 0.9em; color: {txt_col};">
+                    {f}
+                </div>
+                """
+            flags_html += "</div>"
+        else:
+            flags_html += """
+            <div style="margin-top: 20px; border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 0 8px 8px 0; font-size: 0.9em; color: #a7f3d0;">
+                All claims factually align with textbook content. No warnings flagged.
+            </div>
+            """
+            
+        return score_card_html, md_content, flags_html
+        
+    except Exception as e:
+        logger.error(f"Dynamic grading error: {e}")
+        return (
+            f"<div style='color: red;'>Error during dynamic grading: {e}</div>",
+            "### Grading failed due to an error.",
+            f"Error details: {e}"
+        )
+
 def run_batch_grading():
     """Reads saved reports or triggers grading and returns markdown summary table."""
     logger.info("UI triggered Batch Grading Dashboard view")
@@ -203,7 +342,53 @@ with gr.Blocks(
     
     with gr.Tabs():
         
-        # TAB 1: GRADER
+        # TAB 1: DYNAMIC PDF GRADER
+        with gr.Tab("Upload & Grade PDFs"):
+            gr.Markdown("### Upload Textbook, Questions/Rubric, and Student Assignment PDFs to grade dynamically")
+            
+            with gr.Row():
+                with gr.Column(scale=4):
+                    dyn_student_name = gr.Textbox(
+                        value="Uploaded Student",
+                        label="Student Name / Identifier",
+                        placeholder="Enter student name..."
+                    )
+                    
+                    book_upload = gr.File(
+                        file_count="single",
+                        file_types=[".pdf"],
+                        label="1. Upload Textbook PDF"
+                    )
+                    
+                    question_upload = gr.File(
+                        file_count="single",
+                        file_types=[".pdf"],
+                        label="2. Upload Questions/Rubric PDF"
+                    )
+                    
+                    student_upload = gr.File(
+                        file_count="single",
+                        file_types=[".pdf"],
+                        label="3. Upload Student Submission PDF"
+                    )
+                    
+                    dyn_grade_btn = gr.Button("Grade Uploaded Assignment", variant="primary", elem_classes=["primary"])
+                    
+                with gr.Column(scale=5):
+                    gr.Markdown("### Grading Result")
+                    dyn_score_card = gr.HTML("<div style='text-align: center; color: #64748b; padding: 40px;'>Upload PDFs and click 'Grade Uploaded Assignment' to view the evaluation results.</div>")
+                    dyn_flags_card = gr.HTML("")
+                    
+                    with gr.Accordion("Full Markdown Report", open=False):
+                        dyn_markdown_report = gr.Markdown("The report will appear here.")
+                        
+            dyn_grade_btn.click(
+                fn=dynamic_grade_handler,
+                inputs=[dyn_student_name, book_upload, question_upload, student_upload],
+                outputs=[dyn_score_card, dyn_markdown_report, dyn_flags_card]
+            )
+            
+        # TAB 2: INDIVIDUAL GRADER
         with gr.Tab("Individual Grader"):
             gr.Markdown("### Submit and grade individual student answers")
             
@@ -256,7 +441,7 @@ with gr.Blocks(
                 outputs=[score_card, markdown_report, flags_card]
             )
             
-        # TAB 2: BATCH DASHBOARD
+        # TAB 3: BATCH DASHBOARD
         with gr.Tab("Batch Summary Dashboard"):
             gr.Markdown("### Grade all sample submissions at once and compare their results")
             
