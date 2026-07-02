@@ -1,28 +1,28 @@
 # Grading Report - Student B
 
-**Overall Score:** `74/100`
+**Overall Score:** `72/100`
 
 ## Criterion Breakdown
 
-### Correctness (34/40)
-**Justification:** Q1: Directional interpretation is correct, and it implicitly matches the textbook’s “close to 1 good; close to 0 or negative bad” (Page 7–8), though it omits the explicit “explained variance/variance explained” phrasing. Q2: Core ideas are correct (Lasso sparsity; ElasticNet mixes L1 and L2; Ridge is shrinkage), but the answer does not explicitly state which norm each method penalizes, as required. Q3: Correct—RANSAC is designed for outliers by fitting using inliers only, giving robustness vs ordinary least squares (Page 15–16). Q4: Correct—logistic regression gives probabilities via sigmoid bounded in (0,1) and classification follows by thresholding (Page 26–27). Q5: Lacks the textbook-specific definition and interpretation of C as the inverse regularization factor (1/alpha) and the explicit larger-vs-smaller effect (Page 32).
-**Book References:** Page 7, Page 8, Page 9, Page 13, Page 15, Page 16, Page 26, Page 27, Page 32
+### Correctness (29/40)
+**Justification:** Q1: Mostly correct—states R² reflects regression fit and that values near 1 are good and near 0/negative are bad, consistent with the book (but omits the explicit 'explained variance' phrasing). Q2: Partially correct—identifies sparsity for Lasso and that ElasticNet mixes Ridge/Lasso, but does not specify which norms are penalized (Ridge: L2 norm; Lasso: L1 norm; ElasticNet: both L1 and L2). This misses core textbook-aligned details. Q3: Correct—outlier robustness via ignoring outliers (RANSAC) matches the book. Q4: Correct—logistic regression is classification via sigmoid outputs in (0,1) followed by thresholding, matching the book. Q5: Incomplete/partially incorrect—states 'C controls the regularization' but fails to include the key textbook meaning: C is the inverse regularization factor (1/alpha) and larger vs smaller C reduce vs increase regularization strength (and pull weights closer to the origin).
+**Book References:** Page 7, Page 9, Page 13, Page 15, Page 16, Page 26, Page 32
 
 ### Completeness (16/25)
-**Justification:** All questions are answered, but key prompt requirements are incomplete. Q2 does not state, for each method, which specific norm is penalized (Ridge: L2; Lasso: L1; ElasticNet: L1 and L2) and its characteristic effect on weights. Q5 does not include the textbook’s larger vs smaller C effect (bigger values reduce regularization strength; smaller values increase it), and omits the inverse-regularization-factor framing (1/alpha). Minor gaps also exist in Q1 (missing “explained variance” wording).
-**Book References:** Page 7, Page 9, Page 13, Page 32
+**Justification:** All questions are answered, but the prompt requires specific items that are missing in Q2 and Q5. Q2 requires stating which norm each method penalizes; the student omits the explicit norm details. Q5 requires the comparative effect of larger vs smaller C values; the student omits the directionality (larger C reduces regularization; smaller C increases it / moves weights closer to origin).
+**Book References:** Page 9, Page 13, Page 32
 
-### Evidence (13/20)
-**Justification:** Where the student matches textbook concepts, the evidence is reasonable: R2 qualitative behavior (Page 7–8), RANSAC outlier robustness via inliers (Page 15–16), and logistic regression probability via sigmoid + thresholding (Page 26–27) are aligned. However, Q2 and Q5 miss textbook-specific details the question asks for (explicit norms penalized and the parameter C semantics/large-vs-small effect), reducing evidence alignment to the provided textbook context.
-**Book References:** Page 7, Page 8, Page 9, Page 13, Page 15, Page 16, Page 26, Page 27, Page 32
+### Evidence (14/20)
+**Justification:** The student provides reasonable textbook-aligned explanations for Q1, Q3, and Q4. However, Q2 lacks the explicit norm-evidence requested by the textbook, and Q5 lacks the specific inverse-regularization-factor relationship and the larger-vs-smaller C behavior; therefore evidence is weaker precisely where the textbook states key differentiators.
+**Book References:** Page 7, Page 9, Page 13, Page 15, Page 26, Page 32
 
 ### Clarity (13/15)
-**Justification:** Answers are mostly clear and readable. The only clarity losses come from being too high-level in Q2 (doesn’t explicitly list the norms penalized) and too brief/incomplete in Q5 (no larger vs smaller explanation), not from confusing wording.
-**Book References:** Page 9, Page 32
+**Justification:** Answers are generally clear and understandable. Main clarity limitation is that Q2 and Q5 are brief and omit the comparative/norm-specific elements the questions asked for (not that the response is confusing).
 
 ## Overall Feedback
-Overall, the student aligns well with the textbook on R2 qualitative interpretation, RANSAC’s outlier-robust fitting via inliers, and logistic regression’s probabilistic sigmoid output with thresholding. The main deductions are for Q2 (missing explicit norms penalized for Ridge/Lasso/ElasticNet) and Q5 (missing the textbook-specific definition of C as the inverse regularization factor 1/alpha and the explicit effect of larger vs smaller C).
+Strong grasp of R² interpretation, RANSAC’s purpose, and the sigmoid/probability framing in logistic regression. Main deductions come from Q2 (missing the specific norms penalized by Ridge/Lasso/ElasticNet) and Q5 (missing how larger vs smaller C values change regularization strength and weight shrinkage).
 
 ## ⚠️ Warning Flags / Flags
-- Warning: Q5 is incomplete/unsupported relative to the textbook. The textbook states that C is the inverse regularization factor (1/alpha) and specifies larger vs smaller behavior (bigger C reduces regularization strength; smaller C increases it). The student only says 'C controls the regularization' and does not provide the required larger-vs-smaller effect (Textbook Page 32).
+- Warning: Q2 incomplete vs textbook requirement—norms penalized are not stated (Ridge: L2, Lasso: L1, ElasticNet: both L1 and L2). Book references: Page 9 and Page 13.
+- Warning: Q5 incomplete vs textbook requirement—missing that C is the inverse regularization factor (1/alpha) and the effect of larger vs smaller C (larger C reduces regularization strength; smaller C increases it / pulls weights closer to origin). Book reference: Page 32.
 

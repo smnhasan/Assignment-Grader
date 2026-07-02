@@ -2,18 +2,19 @@
   "metadata": {
     "student_name": "Student A",
     "has_injection": false,
-    "injection_reason": "The submission contains only answers to course questions about machine learning concepts. There are no instructions attempting to override the grading system, no requests to ignore rubric/rules, no attempts to control the grader\u2019s output, and no embedded commands targeting evaluation or system behavior."
+    "injection_reason": "The submission contains only answers to course questions about statistical/ML concepts (R2, regularization methods, RANSAC, logistic regression, and scikit-learn parameter C). There are no instructions attempting to override the grading system, no prompt-injection-style requests, and no commands directing the grader to ignore rules or output specific text."
   },
   "criteria": {
     "correctness": {
-      "score": 36,
+      "score": 33,
       "max_score": 40,
-      "justification": "Q1\u2013Q4 are aligned with the textbook: Q1 correctly defines R^2 as explained variance and interprets values near 1 vs near 0/negative; Q2 correctly matches Ridge to L2 shrinkage, Lasso to L1-driven sparsity, and ElasticNet to a mix of L1 and L2; Q3 correctly describes RANSAC as robust regression against outliers by iteratively fitting on inliers; Q4 correctly states logistic regression is classification via sigmoid-produced probabilities bounded in (0,1) with value 0.5 at z=0. For Q5, the main claim (C = inverse regularization factor 1/alpha and larger C \u2192 weaker regularization, smaller C \u2192 stronger) matches the textbook. The only potential overreach is the extra emphasis 'especially below 1' which is not explicitly in the provided context. The statement about 'penalty can be L1 or L2' is consistent with the textbook excerpt that mentions penalty (L1/L2) alongside C.",
+      "justification": "Q1: Correct high-level interpretation of R2 (explained variance; values near 1 good, near 0/negative bad). The part about being \"computed from residuals\" is not fully evidenced by the provided excerpt (it defines residuals but does not give the full R2 computation). Q2: Ridge/Lasso/ElasticNet norms and qualitative effects are correct. However, the claim that ElasticNet \"avoids selectively excluding correlated features\" is not supported by the provided textbook context. Q3: Correct description of RANSAC handling outliers via inliers/outliers and iterative fitting. Q4: Correct: logistic regression is a classification method via class probability bounded in (0,1) using sigmoid and thresholding. Q5: Correct: C is inverse regularization factor (1/alpha) with larger C weaker regularization, smaller C stronger regularization; also consistent that penalty can be L1 or L2.",
       "references": [
         "Page 7",
         "Page 9",
         "Page 13",
         "Page 15",
+        "Page 16",
         "Page 26",
         "Page 32"
       ]
@@ -21,25 +22,27 @@
     "completeness": {
       "score": 25,
       "max_score": 25,
-      "justification": "All questions are fully answered with the requested elements: Q1 measures what R^2 captures and interprets near 1 vs near 0/negative; Q2 states which norm each method penalizes and the characteristic effect on weights; Q3 explains the purpose (outliers) and high-level working procedure (inliers/outliers iterative fitting); Q4 explains why logistic regression is classification and the role of sigmoid; Q5 states what C represents and how larger vs smaller values affect regularization, plus the L1/L2 penalty mention.",
+      "justification": "All five questions are answered with the requested elements: R2 interpretation (Q1), norms penalized and weight effects for Ridge/Lasso/ElasticNet (Q2), outlier problem and high-level RANSAC workflow (Q3), why logistic regression is classification + sigmoid role and thresholding (Q4), and C meaning + effect of larger vs smaller C (Q5).",
       "references": [
         "Page 7",
         "Page 9",
         "Page 13",
         "Page 15",
+        "Page 16",
         "Page 26",
         "Page 32"
       ]
     },
     "evidence": {
-      "score": 19,
+      "score": 15,
       "max_score": 20,
-      "justification": "Explanations consistently track the textbook\u2019s phrasing/ideas (R^2 explained variance; Ridge/Lasso/ElasticNet L2/L1 mix and sparsity/shrinkage; RANSAC outliers with inlier-only training; sigmoid maps to probabilities in (0,1) with 0.5 at x=0; C as inverse regularization factor with direction of effect for larger/smaller values). The only minor evidence gap is the added specificity 'especially below 1' for C\u2019s effect, which is not explicitly supported by the provided excerpts. No other unsupported contradictions were found.",
+      "justification": "Strong alignment with textbook excerpts for most claims: R2 interpretation (Page 7); Ridge/Lasso/ElasticNet penalty description and sparsity vs shrinkage (Pages 9 and 13); RANSAC outlier/inlier iterative fitting (Pages 15-16); logistic regression as probability-based classification with sigmoid properties (Pages 24-26); and C as inverse regularization factor with the stated larger/smaller behavior plus L1/L2 penalty mention (Page 32). Deductions: (1) Q2 includes an extra, unsupported statement about correlated features being selectively excluded; (2) Q1 says R2 is \"computed from residuals\"\u2014the excerpt provides residuals and R2 interpretation but does not explicitly back the computation phrasing in the provided context.",
       "references": [
         "Page 7",
         "Page 9",
         "Page 13",
         "Page 15",
+        "Page 16",
         "Page 26",
         "Page 32"
       ]
@@ -47,19 +50,22 @@
     "clarity": {
       "score": 13,
       "max_score": 15,
-      "justification": "Overall clear, concise, and well-structured answer-by-answer. Minor clarity/precision issue: the 'especially below 1' qualifier in Q5 adds a threshold detail not evidenced in the excerpt, slightly reducing alignment/strictness. Otherwise, terminology and described effects are understandable.",
+      "justification": "Overall clear and well structured with correct terminology. Minor clarity/evidence-alignment issue remains for Q1 (residual computation phrasing not explicitly shown in the excerpt) and the unsupported Q2 correlated-features clause. No contradictions or missing explanations beyond those evidence gaps.",
       "references": [
         "Page 7",
         "Page 9",
+        "Page 13",
         "Page 15",
+        "Page 16",
         "Page 26",
         "Page 32"
       ]
     }
   },
-  "total_score": 93,
-  "feedback": "Strong overall performance. Q1\u2013Q4 match the textbook concepts closely, including the R^2 interpretation, the L1/L2/combined effects of Ridge/Lasso/ElasticNet, RANSAC\u2019s inlier/outlier iterative fitting for robustness, and logistic regression\u2019s sigmoid-based probability view. In Q5, the key definition and directional effect of C are correct; the only minor issue is the extra 'especially below 1' emphasis, which isn\u2019t explicitly stated in the provided textbook context.",
+  "total_score": 86,
+  "feedback": "Good work: all questions are answered accurately at a conceptual level and mostly match the textbook. The main deductions are for two parts that go beyond what is explicitly supported by the provided excerpts: (i) Q2\u2019s statement about ElasticNet avoiding selectively excluding correlated features, and (ii) Q1\u2019s phrasing that R2 is computed from residuals without the excerpt giving the full computation relationship.",
   "flags": [
-    "Q5: Minor unsupported precision \u2014 'especially below 1' for how small C changes regularization strength. Textbook provided says smaller C (in particular less than 1) forces weights closer to the origin, but the 'especially below 1' emphasis is more specific than needed; not a direct contradiction, but slightly over-precise relative to provided excerpt."
+    "Q2 (Pages 9, 13): Unsupported claim \u2014 \"ElasticNet avoids selectively excluding correlated features\" is not stated or evidenced in the provided textbook context.",
+    "Q1 (Page 7): Evidence overreach \u2014 says R2 is \"computed from residuals\"; the excerpt emphasizes explained variance and defines residuals but does not explicitly provide that computation detail in the shown context."
   ]
 }

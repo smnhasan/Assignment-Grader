@@ -17,4 +17,4 @@ fi
 
 # Run the app in the current active conda/python environment
 echo "Starting the AI Assignment Grader..."
-python3 app.py
+/home/nahid/anaconda3/envs/assessment-env/bin/python3 app.py

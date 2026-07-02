@@ -1,35 +1,22 @@
 import os
 import json
-import logging
 import numpy as np
 import faiss
 from pypdf import PdfReader
 from openai import OpenAI
-from dotenv import load_dotenv
 
-# Ensure logs and data dirs exist before configuring logging
-os.makedirs("logs", exist_ok=True)
-os.makedirs("data", exist_ok=True)
+from src.config import OPENAI_API_KEY, EMBEDDING_MODEL, DEFAULT_BOOK_PATH
+from src.utils import setup_logger
 
-# Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler("logs/grader.log"),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+logger = setup_logger("src.indexer")
 
 
 class BookIndexer:
     def __init__(self, book_path=None, save_dir="data/faiss_index"):
-        load_dotenv("/home/nahid/Documents/Projects/finalsei/.env")
-        self.book_path = book_path or "/home/nahid/Documents/Projects/finalsei/book/machine-learning-algorithms_text-book-partial.pdf"
+        self.book_path = book_path or DEFAULT_BOOK_PATH
         self.save_dir = save_dir
-        self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.embedding_model = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+        self.openai_client = OpenAI(api_key=OPENAI_API_KEY)
+        self.embedding_model = EMBEDDING_MODEL
         self.index = None
         self.chunks = []
 

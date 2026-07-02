@@ -512,32 +512,135 @@ if __name__ == "__main__":
             primary_hue="blue",
             secondary_hue="slate"
         ),
+        js="""
+        () => {
+            const body = document.querySelector('body');
+            body.classList.add('dark');
+            
+            // MutationObserver to ensure dark mode class persists
+            const observer = new MutationObserver((mutations) => {
+                if (!body.classList.contains('dark')) {
+                    body.classList.add('dark');
+                }
+            });
+            observer.observe(body, { attributes: true, attributeFilter: ['class'] });
+        }
+        """,
         css="""
-            .gradio-container {
-                background-color: #0f172a !important;
-                color: #f8fafc !important;
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+            
+            /* Root & Background */
+            body, .gradio-container {
+                background-color: #0b0f19 !important;
+                color: #f1f5f9 !important;
+                font-family: 'Outfit', -apple-system, sans-serif !important;
             }
-            button.primary {
-                background-color: #2563eb !important;
-                color: white !important;
+            
+            /* Headings */
+            h1, h2, h3, h4, h5, h6 {
+                color: #ffffff !important;
+                font-family: 'Outfit', sans-serif !important;
+                font-weight: 700 !important;
+                letter-spacing: -0.02em !important;
             }
-            button.primary:hover {
-                background-color: #1d4ed8 !important;
+            
+            /* Text elements & Description texts */
+            p, span, .md p, .md li, .md ul, .md ol, .text-gray-500, .text-gray-600 {
+                color: #cbd5e1 !important;
+                font-size: 1.02em !important;
             }
+            
+            /* Form Input Labels */
+            .block-label, .block-title, label, .label, .svelte-10ha7i4, .svelte-12z222m {
+                color: #f1f5f9 !important;
+                font-weight: 600 !important;
+                font-size: 0.95em !important;
+                letter-spacing: 0.01em !important;
+            }
+            
+            /* Inputs and text areas */
             textarea, input, select {
-                background-color: #1e293b !important;
-                color: #f8fafc !important;
-                border-color: #334155 !important;
+                background-color: #111827 !important;
+                color: #ffffff !important;
+                border: 1px solid #374151 !important;
+                border-radius: 8px !important;
             }
+            textarea:focus, input:focus, select:focus {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+            }
+            
+            /* Dropdowns options */
+            .dropdown-menu, .dropdown-item, .options-list, select option {
+                background-color: #1f2937 !important;
+                color: #ffffff !important;
+            }
+            
+            /* File upload dropzones */
+            .file-preview, .upload-container, .gr-file-upload, div[data-testid="file-upload"] {
+                background-color: #111827 !important;
+                border: 2px dashed #4b5563 !important;
+                border-radius: 12px !important;
+                color: #94a3b8 !important;
+                transition: border-color 0.2s ease !important;
+            }
+            .file-preview:hover, .upload-container:hover, .gr-file-upload:hover, div[data-testid="file-upload"]:hover {
+                border-color: #3b82f6 !important;
+            }
+            .file-preview *, .upload-container *, .gr-file-upload *, div[data-testid="file-upload"] * {
+                color: #cbd5e1 !important;
+            }
+            
+            /* Accordions */
+            .gr-accordion {
+                border: 1px solid #1f2937 !important;
+                border-radius: 10px !important;
+                background-color: #111827 !important;
+                overflow: hidden !important;
+            }
+            .gr-accordion-header {
+                background-color: #1f2937 !important;
+                color: #ffffff !important;
+                font-weight: 600 !important;
+            }
+            
+            /* Tab buttons navigation */
             .tab-nav {
-                border-bottom-color: #334155 !important;
+                border-bottom: 2px solid #1f2937 !important;
+                background-color: #0f172a !important;
+                border-radius: 8px 8px 0 0 !important;
+                padding-top: 4px !important;
             }
             .tab-nav button {
                 color: #94a3b8 !important;
+                font-weight: 600 !important;
+                padding: 10px 16px !important;
+                border: none !important;
+            }
+            .tab-nav button:hover {
+                color: #3b82f6 !important;
             }
             .tab-nav button.selected {
                 color: #3b82f6 !important;
-                border-bottom-color: #3b82f6 !important;
+                border-bottom: 3px solid #3b82f6 !important;
+                background-color: rgba(59, 130, 246, 0.05) !important;
+            }
+            
+            /* Primary Button styling */
+            button.primary {
+                background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+                color: #ffffff !important;
+                font-weight: 700 !important;
+                border-radius: 8px !important;
+                border: none !important;
+                padding: 12px 24px !important;
+                box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3) !important;
+                transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+            }
+            button.primary:hover {
+                transform: translateY(-1px) !important;
+                box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4) !important;
+                background: linear-gradient(135deg, #2563eb, #1e40af) !important;
             }
         """
     )

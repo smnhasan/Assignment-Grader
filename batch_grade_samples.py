@@ -22,8 +22,8 @@ def extract_pdf_text(pdf_path):
 def main():
     grader = AssignmentGrader()
     
-    assignments_dir = "/home/nahid/Documents/Projects/finalsei/assignments"
-    reports_dir = "/home/nahid/Documents/Projects/finalsei/reports"
+    assignments_dir = os.path.join(os.path.dirname(__file__), "assignments")
+    reports_dir = os.path.join(os.path.dirname(__file__), "reports")
     os.makedirs(reports_dir, exist_ok=True)
     
     students = {
