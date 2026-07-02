@@ -1,0 +1,562 @@
+[
+  {
+    "text": "4\nLinear Regression\nLinear models are the simplest parametric methods and always deserve the right attention,\nbecause many problems, even intrinsically non-linear ones, can be easily solved with these\nmodels. As discussed previously, a regression is a prediction where the target is continuous\nand its applications are several, so it's important to understand how a linear model can fit\nthe data, what its strengths and weaknesses are, and when it's preferable to pick an\nalternative. In the last part of the chapter, we're going to discuss an interesting method to\nwork efficiently with non-linear data using the same models.\nLinear models\nConsider a dataset of real-values vectors:\nEach input vector is associated with a real value yi:\nA linear model is based on the assumption that it's possible t",
+    "page": 1
+  },
+  {
+    "text": "a dataset of real-values vectors:\nEach input vector is associated with a real value yi:\nA linear model is based on the assumption that it's possible to approximate the output\nvalues through a regression process based on the rule:",
+    "page": 1
+  },
+  {
+    "text": "Linear Regression\n[ 73 ]\nIn other words, the strong assumption is that our dataset and all other unknown points lie\non a hyperplane and the maximum error is proportional to both the training quality and the\nadaptability of the original dataset. One of the most common problems arises when the\ndataset is clearly non-linear and other models have to be considered (such as neural\nnetworks or kernel support vector machines).\nA bidimensional example\nLet's consider a small dataset built by adding some uniform noise to the points belonging to\na segment bounded between -6 and 6. The original equation is: y = x + 2 + n, where n is a\nnoise term.\nIn the following figure, there's a plot with a candidate regression function:",
+    "page": 2
+  },
+  {
+    "text": "ollowing figure, there's a plot with a candidate regression function:",
+    "page": 2
+  },
+  {
+    "text": "Linear Regression\n[ 74 ]\nAs we're working on a plane, the regressor we're looking for is a function of only two\nparameters:\nIn order to fit our model, we must find the best parameters and to do that we choose an\nordinary least squares approach. The loss function to minimize is:\nWith an analytic approach, in order to find the global minimum, we must impose:\nSo (for simplicity, it accepts a vector containing both variables):\nimport numpy as np\ndef loss(v):\n   e = 0.0\n   for i in range(nb_samples):\n      e += np.square(v[0] + v[1]*X[i] - Y[i])\n   return 0.5 * e\nAnd the gradient can be defined as:\ndef gradient(v):\n   g = np.zeros(shape=2)\n   for i in range(nb_samples):\n     g[0] += (v[0] + v[1]*X[i] - Y[i])\n     g[1] += ((v[0] + v[1]*X[i] - Y[i]) * X[i])\n   return g",
+    "page": 3
+  },
+  {
+    "text": "i in range(nb_samples):\n     g[0] += (v[0] + v[1]*X[i] - Y[i])\n     g[1] += ((v[0] + v[1]*X[i] - Y[i]) * X[i])\n   return g",
+    "page": 3
+  },
+  {
+    "text": "Linear Regression\n[ 75 ]\nThe optimization problem can now be solved using SciPy:\nfrom scipy.optimize import minimize\n>>> minimize(fun=loss, x0=[0.0, 0.0], jac=gradient, method='L-BFGS-B')\nfun: 9.7283268345966025\n hess_inv: <2x2 LbfgsInvHessProduct with dtype=float64>\n      jac: array([  7.28577538e-06,  -2.35647522e-05])\n  message: 'CONVERGENCE: REL_REDUCTION_OF_F_<=_FACTR*EPSMCH'\n     nfev: 8\n      nit: 7\n   status: 0\n  success: True\n        x: array([ 2.00497209,  1.00822552])\nAs expected, the regression denoised our dataset, rebuilding the original equation: y = x + 2.\nLinear regression with scikit-learn and\nhigher dimensionality\nscikit-learn offers the class LinearRegression, which works with n-dimensional spaces.\nFor this purpose, we're going to use the Boston dataset:\nfrom sklearn.da",
+    "page": 4
+  },
+  {
+    "text": "arn offers the class LinearRegression, which works with n-dimensional spaces.\nFor this purpose, we're going to use the Boston dataset:\nfrom sklearn.datasets import load_boston\n>>> boston = load_boston()\n>>> boston.data.shape\n(506L, 13L)\n>>> boston.target.shape\n(506L,)",
+    "page": 4
+  },
+  {
+    "text": "Linear Regression\n[ 76 ]\nIt has 506 samples with 13 input features and one output. In the following figure, there' a\ncollection of the plots of the first 12 features:\nWhen working with datasets, it's useful to have a tabular view to\nmanipulate data. pandas is a perfect framework for this task, and even\nthough it's beyond the scope of this book, I suggest you create a data\nframe with the command pandas.DataFrame(boston.data,\ncolumns=boston.feature_names) and use Jupyter to visualize it. For\nfurther information, refer to Heydt M., Learning pandas - Python Data\nDiscovery and Analysis Made Easy, Packt.",
+    "page": 5
+  },
+  {
+    "text": "Linear Regression\n[ 77 ]\nThere are different scales and outliers (which can be removed using the methods studied in\nthe previous chapters), so it's better to ask the model to normalize the data before\nprocessing it. Moreover, for testing purposes, we split the original dataset into training\n(90%) and test (10%) sets:\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.model_selection import train_test_split\n>>> X_train, X_test, Y_train, Y_test = train_test_split(boston.data,\nboston.target, test_size=0.1)\n>>> lr = LinearRegression(normalize=True)\n>>> lr.fit(X_train, Y_train)\nLinearRegression(copy_X=True, fit_intercept=True, n_jobs=1, normalize=True)\nWhen the original data set isn't large enough, splitting it into training and test sets may\nreduce the number of samples that can be",
+    "page": 6
+  },
+  {
+    "text": ", normalize=True)\nWhen the original data set isn't large enough, splitting it into training and test sets may\nreduce the number of samples that can be used for fitting the model. k-fold cross-validation\ncan help in solving this problem with a different strategy. The whole dataset is split into k\nfolds using always k-1 folds for training and the remaining one to validate the model. K\niterations will be performed, using always a different validation fold. In the following\nfigure, there's an example with 3 folds/iterations:",
+    "page": 6
+  },
+  {
+    "text": "Linear Regression\n[ 78 ]\nIn this way, the final score can be determined as average of all values and all samples are\nselected for training k-1 times.\nTo check the accuracy of a regression, scikit-learn provides the internal method score(X,\ny) which evaluates the model on test data:\n>>> lr.score(X_test, Y_test)\n0.77371996006718879\nSo the overall accuracy is about 77%, which is an acceptable result considering the non-\nlinearity of the original dataset, but it can be also influenced by the subdivision made by\ntrain_test_split (like in our case). Instead, for k-fold cross-validation, we can use the\nfunction cross_val_score(), which works with all the classifiers. The scoring parameter\nis very important because it determines which metric will be adopted for tests. As\nLinearRegression works wit",
+    "page": 7
+  },
+  {
+    "text": "l the classifiers. The scoring parameter\nis very important because it determines which metric will be adopted for tests. As\nLinearRegression works with ordinary least squares, we preferred the negative mean\nsquared error, which is a cumulative measure that must be evaluated according to the\nactual values (it's not relative).\nfrom sklearn.model_selection import cross_val_score\n>>> scores = cross_val_score(lr, boston.data, boston.target, cv=7,\nscoring='neg_mean_squared_error')\narray([ -11.32601065,  -10.96365388,  -32.12770594,  -33.62294354,\n        -10.55957139, -146.42926647,  -12.98538412])\n>>> scores.mean()\n-36.859219426420601\n>>> scores.std()\n45.704973900600457\nAnother very important metric used in regressions is called the coefficient of\ndetermination or R\n2\n. It measures the amount o",
+    "page": 7
+  },
+  {
+    "text": "td()\n45.704973900600457\nAnother very important metric used in regressions is called the coefficient of\ndetermination or R\n2\n. It measures the amount of variance on the prediction which is\nexplained by the dataset. We define residuals, the following quantity:",
+    "page": 7
+  },
+  {
+    "text": "Linear Regression\n[ 79 ]\nIn other words, it is the difference between the sample and the prediction. So the R\n2\n is\ndefined as follows:\nFor our purposes, R\n2\n values close to 1 mean an almost perfect regression, while values close\nto 0 (or negative) imply a bad model. Using this metric is quite easy with cross-validation:\n>>> cross_val_score(lr, X, Y, cv=10, scoring='r2')\n0.75\nRegressor analytic expression\nIf we want to have an analytical expression of our model (a hyperplane),\nLinearRegression offers two instance variables, intercept_ and coef_:\n>>> print('y = ' + str(lr.intercept_) + ' ')\n>>> for i, c in enumerate(lr.coef_):\n       print(str(c) + ' * x' + str(i))\ny = 38.0974166342\n-0.105375005552 * x0\n0.0494815380304 * x1\n0.0371643549528 * x2\n3.37092201039 * x3\n-18.9885299511 * x4\n3.7333",
+    "page": 8
+  },
+  {
+    "text": "r(c) + ' * x' + str(i))\ny = 38.0974166342\n-0.105375005552 * x0\n0.0494815380304 * x1\n0.0371643549528 * x2\n3.37092201039 * x3\n-18.9885299511 * x4\n3.73331692311 * x5\n0.00111437695492 * x6\n-1.55681538908 * x7\n0.325992743837 * x8\n-0.01252057277 * x9\n-0.978221746439 * x10\n0.0101679515792 * x11\n-0.550117114635 * x12",
+    "page": 8
+  },
+  {
+    "text": "Linear Regression\n[ 80 ]\nAs for any other model, a prediction can be obtained through the method predict(X). As\nan experiment, we can try to add some Gaussian noise to our training data and predict the\nvalue:\n>>> X = boston.data[0:10] + np.random.normal(0.0, 0.1)\n>>> lr.predict(X)\narray([ 29.5588731 ,  24.49601998,  30.0981552 ,  28.01864586,\n        27.28870704,  24.65881135,  22.46335968,  18.79690943,\n        10.53493932,  18.18093544])\n>>> boston.target[0:10]\narray([ 24. ,  21.6,  34.7,  33.4,  36.2,  28.7,  22.9,  27.1,  16.5,\n18.9])\nIt's obvious that the model is not performing in an ideal way and there are many possible\nreasons, the foremost being nonlinearities and the presence of outliers. However, in general,\na linear regression model is not a perfectly robust solution. In Hastie",
+    "page": 9
+  },
+  {
+    "text": "remost being nonlinearities and the presence of outliers. However, in general,\na linear regression model is not a perfectly robust solution. In Hastie T., Tibshirani R.,\nFriedman J., The Elements of Statistical Learning: Data Mining, Inference, and, Prediction,\nSpringer, you can find a very detailed discussion about its strengths and weaknesses.\nHowever, in this context, a common threat is represented by collinearities that lead to low-\nrank X matrix. This determines an ill-conditioned matrix that is particularly sensitive to\nnoise, causing the explosion of some parameters as well. The following methods have been\nstudied in order to mitigate this risk and provide more robust solutions.\nRidge, Lasso, and ElasticNet\nRidge regression imposes an additional shrinkage penalty to the ordinary lea",
+    "page": 9
+  },
+  {
+    "text": "this risk and provide more robust solutions.\nRidge, Lasso, and ElasticNet\nRidge regression imposes an additional shrinkage penalty to the ordinary least squares loss\nfunction to limit its squared L2 norm:",
+    "page": 9
+  },
+  {
+    "text": "Linear Regression\n[ 81 ]\nIn this case, X is a matrix containing all samples as columns and the term w represents the\nweight vector. The additional term (through the coefficient alpha\u2014if large it implies a\nstronger regularization and smaller values) forces the loss function to disallow an infinite\ngrowth of w, which can be caused by multicollinearity or ill-conditioning. In the following\nfigure, there's a representation of what happens when a Ridge penalty is applied:\nThe gray surface represents the loss function (here, for simplicity, we're working with only\ntwo weights), while the circle center O is the boundary imposed by the Ridge condition.\nThe minimum will have smaller w values and potential explosions are avoided.",
+    "page": 10
+  },
+  {
+    "text": "n.\nThe minimum will have smaller w values and potential explosions are avoided.",
+    "page": 10
+  },
+  {
+    "text": "Linear Regression\n[ 82 ]\nIn the following snippet, we're going to compare LinearRegression and Ridge with a\ncross-validation:\nfrom sklearn.datasets import load_diabetes\nfrom sklearn.linear_model import LinearRegression, Ridge\n>>> diabetes = load_diabetes()\n>>> lr = LinearRegression(normalize=True)\n>>> rg = Ridge(0.001, normalize=True)\n>>> lr_scores = cross_val_score(lr, diabetes.data, diabetes.target, cv=10)\n>>> lr_scores.mean()\n0.46196236195833718\n>>> rg_scores = cross_val_score(rg, diabetes.data, diabetes.target, cv=10)\n>>> rg_scores.mean()\n0.46227174692391299\nSometimes, finding the right value for alpha (Ridge coefficient) is not so immediate. scikit-\nlearn provides the class RidgeCV, which allows performing an automatic grid search\n(among a set and returning the best estimation):\nfrom",
+    "page": 11
+  },
+  {
+    "text": "ate. scikit-\nlearn provides the class RidgeCV, which allows performing an automatic grid search\n(among a set and returning the best estimation):\nfrom sklearn.linear_model import RidgeCV\n>>> rg = RidgeCV(alphas=(1.0, 0.1, 0.01, 0.005, 0.0025, 0.001, 0.00025),\nnormalize=True)\n>>> rg.fit(diabetes.data, diabetes.target)\n>>> rg.alpha_\n0.0050000000000000001\nA Lasso regressor imposes a penalty on the L1 norm of w to determine a potentially higher\nnumber of null coefficients:",
+    "page": 11
+  },
+  {
+    "text": "Linear Regression\n[ 83 ]\nThe sparsity is a consequence of the penalty term (the mathematical proof is non-trivial and\nwill be omitted).\nIn this case, there are vertices where a component is non-null while all the other weights are\nzero. The probability of an intersection with a vertex is proportional to the dimensionality\nof w and, therefore, it's normal to discover a rather sparse model after training a Lasso\nregressor.\nIn the following snippet, the diabetes dataset is used to fit a Lasso model:\nfrom sklearn.linear_model import Lasso\n>>> ls = Lasso(alpha=0.001, normalize=True)\n>>> ls_scores = cross_val_score(ls, diabetes.data, diabetes.target, cv=10)\n>>> ls_scores.mean()\n0.46215747851504058",
+    "page": 12
+  },
+  {
+    "text": "t, cv=10)\n>>> ls_scores.mean()\n0.46215747851504058",
+    "page": 12
+  },
+  {
+    "text": "Linear Regression\n[ 84 ]\nAlso for Lasso, there's the possibility of running a grid search for the best alpha parameter.\nThe class, in this case, is LassoCV and its internal dynamics are similar to what was already\nseen for Ridge. Lasso can also perform efficiently on the sparse data generated through the\nscipy.sparse class, allowing for training bigger models without the need for partial\nfitting:\nfrom scipy import sparse\n>>> ls = Lasso(alpha=0.001, normalize=True)\n>>> ls.fit(sparse.coo_matrix(diabetes.data), diabetes.target)\nLasso(alpha=0.001, copy_X=True, fit_intercept=True, max_iter=1000,\n   normalize=True, positive=False, precompute=False, random_state=None,\n   selection='cyclic', tol=0.0001, warm_start=False)\nWhen working with a huge amount of data, some models cannot fit\ncompletely in",
+    "page": 13
+  },
+  {
+    "text": "random_state=None,\n   selection='cyclic', tol=0.0001, warm_start=False)\nWhen working with a huge amount of data, some models cannot fit\ncompletely in memory, so it's impossible to train them. scikit-learn offers\nsome models, such as stochastic gradient descent (SGD), which work in a\nway quite similar to LinearRegression with Ridge/Lasso; however,\nthey also implement the method partial_fit(), which also allows\ncontinuous training through Python generators. See h t t p ://s c i k i t - l e a r\nn . o r g /s t a b l e /m o d u l e s /l i n e a r _ m o d e l . h t m l #s t o c h a s t i c - g r a d i e n t - d e s\nc e n t - s g d , for further details.\nThe last alternative is ElasticNet, which combines both Lasso and Ridge into a single model\nwith two penalty factors: one proportional to L1 no",
+    "page": 13
+  },
+  {
+    "text": "tails.\nThe last alternative is ElasticNet, which combines both Lasso and Ridge into a single model\nwith two penalty factors: one proportional to L1 norm and the other to L2 norm. In this\nway, the resulting model will be sparse like a pure Lasso, but with the same regularization\nability as provided by Ridge. The resulting loss function is:",
+    "page": 13
+  },
+  {
+    "text": "Linear Regression\n[ 85 ]\nThe ElasticNet class provides an implementation where the alpha parameter works in\nconjunction with l1_ratio (beta in the formula). The main peculiarity of ElasticNet is\navoiding a selective exclusion of correlated features, thanks to the balanced action of the L1\nand L2 norms.\nIn the following snippet, there's an example using both the ElasticNet and\nElasticNetCV classes:\nfrom sklearn.linear_model import ElasticNet, ElasticNetCV\n>>> en = ElasticNet(alpha=0.001, l1_ratio=0.8, normalize=True)\n>>> en_scores = cross_val_score(en, diabetes.data, diabetes.target, cv=10)\n>>> en_scores.mean()\n0.46358858847836454\n>>> encv = ElasticNetCV(alphas=(0.1, 0.01, 0.005, 0.0025, 0.001),\nl1_ratio=(0.1, 0.25, 0.5, 0.75, 0.8), normalize=True)\n>>> encv.fit(dia.data, dia.target)\nElastic",
+    "page": 14
+  },
+  {
+    "text": "lasticNetCV(alphas=(0.1, 0.01, 0.005, 0.0025, 0.001),\nl1_ratio=(0.1, 0.25, 0.5, 0.75, 0.8), normalize=True)\n>>> encv.fit(dia.data, dia.target)\nElasticNetCV(alphas=(0.1, 0.01, 0.005, 0.0025, 0.001), copy_X=True,\ncv=None,\n       eps=0.001, fit_intercept=True, l1_ratio=(0.1, 0.25, 0.5, 0.75, 0.8),\n       max_iter=1000, n_alphas=100, n_jobs=1, normalize=True,\n       positive=False, precompute='auto', random_state=None,\n       selection='cyclic', tol=0.0001, verbose=0)\n>>> encv.alpha_\n0.001\n>>> encv.l1_ratio_\n0.75",
+    "page": 14
+  },
+  {
+    "text": "Linear Regression\n[ 86 ]\nRobust regression with random sample\nconsensus\nA common problem with linear regressions is caused by the presence of outliers. An\nordinary least square approach will take them into account and the result (in terms of\ncoefficients) will be therefore biased. In the following figure, there's an example of such a\nbehavior:\nThe less sloped line represents an acceptable regression which discards the outliers, while\nthe other one is influenced by them. An interesting approach to avoid this problem is\noffered by random sample consensus (RANSAC), which works with every regressor by\nsubsequent iterations, after splitting the dataset into inliers and outliers. The model is\ntrained only with valid samples (evaluated internally or through the callable\nis_data_valid()) and all s",
+    "page": 15
+  },
+  {
+    "text": "taset into inliers and outliers. The model is\ntrained only with valid samples (evaluated internally or through the callable\nis_data_valid()) and all samples are re-evaluated to verify if they're still inliers or they\nhave become outliers. The process ends after a fixed number of iterations or when the\ndesired score is achieved.",
+    "page": 15
+  },
+  {
+    "text": "Linear Regression\n[ 87 ]\nIn the following snippet, there's an example of simple linear regression applied to the\ndataset shown in the previous figure.\nfrom sklearn.linear_model import LinearRegression\n>>> lr = LinearRegression(normalize=True)\n>>> lr.fit(X.reshape((-1, 1)), Y.reshape((-1, 1)))\n>>> lr.intercept_\narray([ 5.500572])\n>>> lr.coef_\narray([[ 2.53688672]])\nAs imagined, the slope is high due to the presence of outliers. The resulting regressor is y =\n5.5 + 2.5x (slightly less sloped than what was shown in the figure). Now we're going to use\nRANSAC with the same linear regressor:\nfrom sklearn.linear_model import RANSACRegressor\n>>> rs = RANSACRegressor(lr)\n>>> rs.fit(X.reshape((-1, 1)), Y.reshape((-1, 1)))\n>>> rs.estimator_.intercept_\narray([ 2.03602026])\n>>> es.estimator_.coef_\narra",
+    "page": 16
+  },
+  {
+    "text": "RANSACRegressor(lr)\n>>> rs.fit(X.reshape((-1, 1)), Y.reshape((-1, 1)))\n>>> rs.estimator_.intercept_\narray([ 2.03602026])\n>>> es.estimator_.coef_\narray([[ 0.99545348]])\nIn this case, the regressor is about y = 2 + x (which is the original clean dataset without\noutliers).\nIf you want to have further information, I suggest visiting the page h t t p\n://s c i k i t - l e a r n . o r g /s t a b l e /m o d u l e s /g e n e r a t e d /s k l e a r n . l i n e a r _ m o\nd e l . R A N S A C R e g r e s s o r . h t m l . For other robust regression techniques, visit:\nh t t p ://s c i k i t - l e a r n . o r g /s t a b l e /m o d u l e s /l i n e a r _ m o d e l . h t m l #r o b u s\nt n e s s - r e g r e s s i o n - o u t l i e r s - a n d - m o d e l i n g - e r r o r s .\nPolynomial regression\nPolyno",
+    "page": 16
+  },
+  {
+    "text": "o d e l . h t m l #r o b u s\nt n e s s - r e g r e s s i o n - o u t l i e r s - a n d - m o d e l i n g - e r r o r s .\nPolynomial regression\nPolynomial regression is a technique based on a trick that allows using linear models even\nwhen the dataset has strong non-linearities. The idea is to add some extra variables\ncomputed from the existing ones and using (in this case) only polynomial combinations:",
+    "page": 16
+  },
+  {
+    "text": "Linear Regression\n[ 88 ]\nFor example, with two variables, it's possible to extend to a second-degree problem by\ntransforming the initial vector (whose dimension is equal to m) into another one with higher\ndimensionality (whose dimension is k > m):\nIn this case, the model remains externally linear, but it can capture internal non-linearities.\nTo show how scikit-learn implements this technique, let's consider the dataset shown in the\nfollowing figure:",
+    "page": 17
+  },
+  {
+    "text": "Linear Regression\n[ 89 ]\nThis is clearly a non-linear dataset, and any linear regression based only on the original\ntwo-dimensional points cannot capture the dynamics. Just to try, we can train a simple\nmodel (testing it on the same dataset):\nfrom sklearn.linear_model import LinearRegression\n>>> lr = LinearRegression(normalize=True)\n>>> lr.fit(X.reshape((-1, 1)), Y.reshape((-1, 1)))\n>>> lr.score(X.reshape((-1, 1)), Y.reshape((-1, 1)))\n0.10888218817034558\nPerformances are poor, as expected. However, looking at the figure, we might suppose that\na quadratic regression could easily solve this problem. scikit-learn provides the class\nPolynomialFeatures, which transforms an original set into an expanded one according to\nthe parameter degree:\nfrom sklearn.preprocessing import PolynomialFeatures\n>",
+    "page": 18
+  },
+  {
+    "text": "tures, which transforms an original set into an expanded one according to\nthe parameter degree:\nfrom sklearn.preprocessing import PolynomialFeatures\n>>> pf = PolynomialFeatures(degree=2)\n>>> Xp = pf.fit_transform(X.reshape(-1, 1))\n>>> Xp.shape\n(100L, 3L)\nAs expected, the old x1 coordinate has been replaced by a triplet, which also contains the\nquadratic and mixed terms. At this point, a linear regression model can be trained:\n>>> lr.fit(Xp, Y.reshape((-1, 1)))\n>>> lr.score(Xp, Y.reshape((-1, 1)))\n0.99692778265941961\nThe score is quite higher and the only price we have paid is an increase in terms of features.\nIn general, this is feasible; however, if the number grows over an accepted threshold, it's\nuseful to try a dimensionality reduction or, as an extreme solution, to move to a non-linea",
+    "page": 18
+  },
+  {
+    "text": "ever, if the number grows over an accepted threshold, it's\nuseful to try a dimensionality reduction or, as an extreme solution, to move to a non-linear\nmodel (such as SVM-Kernel). Usually, a good approach is using the class\nSelectFromModel to let scikit-learn select the best features based on their importance. In\nfact, when the number of features increases, the probability that all of them have the same\nimportance gets lower. This is the result of mutual correlation or of the co-presence of major\nand minor trends, which act like noise and don't have the strength to alter perceptibility the\nhyperplane slope. Moreover, when using a polynomial expansion, some weak features (that\ncannot be used for a linear separation) are substituted by their functions and so the actual\nnumber of strong featu",
+    "page": 18
+  },
+  {
+    "text": "xpansion, some weak features (that\ncannot be used for a linear separation) are substituted by their functions and so the actual\nnumber of strong features decreases.",
+    "page": 18
+  },
+  {
+    "text": "Linear Regression\n[ 90 ]\nIn the following snippet, there's an example with the previous Boston dataset. The\nthreshold parameter is used to set a minimum importance level. If missing, the class will\ntry to maximize the efficiency by removing the highest possible number of features.\nfrom sklearn.feature_selection import SelectFromModel\n>>> boston = load_boston()\n>>> pf = PolynomialFeatures(degree=2)\n>>> Xp = pf.fit_transform(boston.data)\n>>> Xp.shape\n(506L, 105L)\n>>> lr = LinearRegression(normalize=True)\n>>> lr.fit(Xp, boston.target)\n>>> lr.score(Xp, boston.target)\n0.91795268869997404\n>>> sm = SelectFromModel(lr, threshold=10)\n>>> Xt = sm.fit_transform(Xp, boston.target)\n>>> sm.estimator_.score(Xp, boston.target)\n0.91795268869997404\n>>> Xt.shape\n(506L, 8L)\nAfter selecting only the best featu",
+    "page": 19
+  },
+  {
+    "text": "ransform(Xp, boston.target)\n>>> sm.estimator_.score(Xp, boston.target)\n0.91795268869997404\n>>> Xt.shape\n(506L, 8L)\nAfter selecting only the best features (with the threshold set to 10), the score remains the\nsame, with a consistent dimensionality reduction (only 8 features are considered important\nfor the prediction). If, after any other processing step, it's necessary to return to the original\ndataset, it's possible to use the inverse transformation:\n>>> Xo = sm.inverse_transform(Xt)\n>>> Xo.shape\n(506L, 105L)",
+    "page": 19
+  },
+  {
+    "text": "Linear Regression\n[ 91 ]\nIsotonic regression\nThere are situations when we need to find a regressor for a dataset of non-decreasing points\nwhich can present low-level oscillations (such as noise). A linear regression can easily\nachieve a very high score (considering that the slope is about constant), but it works like a\ndenoiser, producing a line that can't capture the internal dynamics we'd like to model. For\nthese situations, scikit-learn offers the class IsotonicRegression, which produces a\npiecewise interpolating function minimizing the functional:\nAn example (with a toy dataset) is provided next:\n>>> X = np.arange(-5, 5, 0.1)\n>>> Y = X + np.random.uniform(-0.5, 1, size=X.shape)\nFollowing is a plot of the dataset. As everyone can see, it can be easily modeled by a linear\nregressor, but",
+    "page": 20
+  },
+  {
+    "text": "np.random.uniform(-0.5, 1, size=X.shape)\nFollowing is a plot of the dataset. As everyone can see, it can be easily modeled by a linear\nregressor, but without a high non-linear function, it is very difficult to capture the slight\n(and local) modifications in the slope:",
+    "page": 20
+  },
+  {
+    "text": "Linear Regression\n[ 92 ]\nThe class IsotonicRegression needs to know ymin and ymax (which correspond to the\nvariables y0 and yn in the loss function). In this case, we impose -6 and 10:\nfrom sklearn.isotonic import IsotonicRegression\n>>> ir = IsotonicRegression(-6, 10)\n>>> Yi = ir.fit_transform(X, Y)\nThe result is provided through three instance variables:\n>>> ir.X_min_\n-5.0\n>>> ir.X_max_\n4.8999999999999648\n>>> ir.f_\n<scipy.interpolate.interpolate.interp1d at 0x126edef8>\nThe last one, (ir.f_), is an interpolating function which can be evaluated in the domain\n[xmin, xmax]. For example:\n>>> ir.f_(2)\narray(1.7294334618146134)\nA plot of this function (the green line), together with the original data set, is shown in the\nfollowing figure:",
+    "page": 21
+  },
+  {
+    "text": "ion (the green line), together with the original data set, is shown in the\nfollowing figure:",
+    "page": 21
+  },
+  {
+    "text": "Linear Regression\n[ 93 ]\nFor further information about interpolation with SciPy, visit h t t p s ://d o c s\n. s c i p y . o r g /d o c /s c i p y - 0. 18. 1/r e f e r e n c e /i n t e r p o l a t e . h t m l .\nReferences\nHastie T., Tibshirani R., Friedman J., The Elements of Statistical Learning: Data Mining,\nInference, and, Prediction, Springer\nSummary\nIn this chapter, we have introduced the important concepts of linear models and have\ndescribed how linear regression works. In particular, we focused on the basic model and its\nmain variants: Lasso, Ridge, and ElasticNet. They don't modify the internal dynamics but\nwork as normalizers for the weights, in order to avoid common problems when the dataset\ncontains unscaled samples. These penalties have specific peculiarities. While Lasso\npromot",
+    "page": 22
+  },
+  {
+    "text": "weights, in order to avoid common problems when the dataset\ncontains unscaled samples. These penalties have specific peculiarities. While Lasso\npromotes sparsity, Ridge tries to find a minimum with the constraints that the weights must\nlay on a circle centered at the origin (whose radius is parametrized to increase/decrease the\nnormalization strength). ElasticNet is a mix of both these techniques and it tries to find a\nminimum where the weights are small enough and a certain degree of sparsity is achieved.\nWe also discussed advanced techniques such as RANSAC, which allows coping with\noutliers in a very robust way, and polynomial regression, which is a very smart way to\ninclude virtual non-linear features into our model and continue working with them with\nthe same linear approach. In this w",
+    "page": 22
+  },
+  {
+    "text": "hich is a very smart way to\ninclude virtual non-linear features into our model and continue working with them with\nthe same linear approach. In this way, it's possible to create another dataset, containing the\noriginal columns together with polynomial combinations of them. This new dataset can be\nused to train a linear regression model, and then it's possible to select only those features\nthat contributed towards achieving good performances. The last method we saw was\nisotonic regression, which is particularly useful when the function to interpolate is always\nnot decreasing. Moreover it can capture the small oscillations that would be flattened by a\ngeneric linear regression.\nIn the next chapter, we're going to discuss some linear models for classifications. In\nparticular, we'll focus our",
+    "page": 22
+  },
+  {
+    "text": "ed by a\ngeneric linear regression.\nIn the next chapter, we're going to discuss some linear models for classifications. In\nparticular, we'll focus our attention on the logistic regression and stochastic gradient\ndescent algorithms. Moreover, we're going to introduce some useful metrics to evaluate the\naccuracy of a classification system, and a powerful technique to automatically find the best\nhyperparameters.",
+    "page": 22
+  },
+  {
+    "text": "5\nLogistic Regression\nThis chapter begins by analyzing linear classification problems, with particular focus on\nlogistic regression (despite its name, it's a classification algorithm) and stochastic gradient\ndescent approaches. Even if these strategies appear too simple, they're still the main choices\nin many classification tasks. Speaking of which, it's useful to remember a very important\nphilosophical principle: Occam's razor. In our context, it states that the first choice must\nalways be the simplest and only if it doesn't fit, it's necessary to move on to more complex\nmodels. In the second part of the chapter, we're going to discuss some common metrics\nuseful to evaluate a classification task. They are not limited to linear models, so we use\nthem when talking about different strategies",
+    "page": 23
+  },
+  {
+    "text": "common metrics\nuseful to evaluate a classification task. They are not limited to linear models, so we use\nthem when talking about different strategies as well.",
+    "page": 23
+  },
+  {
+    "text": "Logistic Regression\n[ 95 ]\nLinear classification\nLet's consider a generic linear classification problem with two classes. In the following\nfigure, there's an example:",
+    "page": 24
+  },
+  {
+    "text": "Logistic Regression\n[ 96 ]\nOur goal is to find an optimal hyperplane, which separates the two classes. In multi-class\nproblems, the strategy one-vs-all is normally adopted, so the discussion can be focused only\non binary classifications. Suppose we have the following dataset:\nThis dataset is associated with the following target set:\nWe can now define a weight vector made of m continuous components:\nWe can also define the quantity z:\nIf x is a variable, z is the value determined by the hyperplane equation. Therefore, if the set\nof coefficients w that has been determined is correct, it happens that:\nNow we must find a way to optimize w, in order to reduce the classification error. If such a\ncombination exists (with a certain error threshold), we say that our problem is linearly\nseparable. On",
+    "page": 25
+  },
+  {
+    "text": "r to reduce the classification error. If such a\ncombination exists (with a certain error threshold), we say that our problem is linearly\nseparable. On the other hand, when it's impossible to find a linear classifier, the problem is\ncalled non-linearly separable. A very simple but famous example is given by the logical\noperator XOR:",
+    "page": 25
+  },
+  {
+    "text": "Logistic Regression\n[ 97 ]\nAs you can see, any line will always include a wrong sample. Hence, in order to solve this\nproblem, it is necessary to involve non-linear techniques. However, in many real-life cases,\nwe use linear techniques (which are often simpler and faster) for non-linear problems too,\naccepting a tolerable misclassification error.\nLogistic regression\nEven if called regression, this is a classification method which is based on the probability for\na sample to belong to a class. As our probabilities must be continuous in R and bounded\nbetween (0, 1), it's necessary to introduce a threshold function to filter the term z. The name\nlogistic comes from the decision to use the sigmoid (or logistic) function:",
+    "page": 26
+  },
+  {
+    "text": "logistic comes from the decision to use the sigmoid (or logistic) function:",
+    "page": 26
+  },
+  {
+    "text": "Logistic Regression\n[ 98 ]\nA partial plot of this function is shown in the following figure:\nAs you can see, the function intersects x=0 in the ordinate 0.5, and y<0.5 for x<0 and y>0.5 for\nx>0. Moreover, its domain is R and it has two asymptotes at 0 and 1. So, we can define the\nprobability for a sample to belong to a class (from now on, we'll call them 0 and 1) as:\nAt this point, finding the optimal parameters is equivalent to maximizing the log-likelihood\ngiven the output class:",
+    "page": 27
+  },
+  {
+    "text": "Logistic Regression\n[ 99 ]\nTherefore, the optimization problem can be expressed, using the indicator notation, as the\nminimization of the loss function:\nIf y=0, the first term becomes null and the second one becomes log(1-x), which is the log-\nprobability of the class 0. On the other hand, if y=1, the second term is 0 and the first one\nrepresents the log-probability of x. In this way, both cases are embedded in a single\nexpression. In terms of information theory, it means minimizing the cross-entropy between\na target distribution and an approximated one:\nIn particular, if log2 is adopted, the functional expresses the number of extra bits requested\nto encode the original distribution with the predicted one. It's obvious that when J(w) = 0,\nthe two distributions are equal. Therefore, minimiz",
+    "page": 28
+  },
+  {
+    "text": "ested\nto encode the original distribution with the predicted one. It's obvious that when J(w) = 0,\nthe two distributions are equal. Therefore, minimizing the cross-entropy is an elegant way\nto optimize the prediction error when the target distributions are categorical.\nImplementation and optimizations\nscikit-learn implements the LogisticRegression class, which can solve this problem\nusing optimized algorithms. Let's consider a toy dataset made of 500 samples:",
+    "page": 28
+  },
+  {
+    "text": "Logistic Regression\n[ 100 ]\nThe dots belong to the class 0, while the triangles belong to the class 1. In order to\nimmediately test the accuracy of our classification, it's useful to split the dataset into\ntraining and test sets:\nfrom sklearn.model_selection import train_test_split\n>>> X_train, X_test, Y_train, Y_test = train_test_split(X, Y,\ntest_size=0.25)",
+    "page": 29
+  },
+  {
+    "text": "Logistic Regression\n[ 101 ]\nNow we can train the model using the default parameters:\nfrom sklearn.linear_model import LogisticRegression\n>>> lr = LogisticRegression()\n>>> lr.fit(X_train, Y_train)\nLogisticRegression(C=1.0, class_weight=None, dual=False,\nfit_intercept=True,\n          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,\n          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,\n          verbose=0, warm_start=False)\n>>> lr.score(X_test, Y_test)\n0.95199999999999996\nIt's also possible to check the quality through a cross-validation (like for linear regression):\nfrom sklearn.model_selection import cross_val_score\n>>> cross_val_score(lr, X, Y, scoring='accuracy', cv=10)\narray([ 0.96078431,  0.92156863,  0.96      ,  0.98      ,  0.96      ,\n        0.98",
+    "page": 30
+  },
+  {
+    "text": "al_score\n>>> cross_val_score(lr, X, Y, scoring='accuracy', cv=10)\narray([ 0.96078431,  0.92156863,  0.96      ,  0.98      ,  0.96      ,\n        0.98      ,  0.96      ,  0.96      ,  0.91836735,  0.97959184])\nThe classification task has been successful without any further action (confirmed also by the\ncross-validation) and it's also possible to check the resulting hyperplane parameters:\n>>> lr.intercept_\narray([-0.64154943])\n>>> lr.coef_\narray([[ 0.34417875,  3.89362924]])\nIn the following figure, there's a representation of this hyperplane (a line), where it's\npossible to see how the classification works and what samples are misclassified.\nConsidering the local density of the two blocks, it's easy to see that the misclassifications\nhappened for outliers and for some borderline samples.",
+    "page": 30
+  },
+  {
+    "text": "Considering the local density of the two blocks, it's easy to see that the misclassifications\nhappened for outliers and for some borderline samples. The latter can be controlled by\nadjusting the hyperparameters, even if a trade-off is often necessary. For example, if we\nwant to include the four right dots on the separation line, this could exclude some elements\nin the right part. Later on, we're going to see how to find the optimal solution. However,\nwhen a linear classifier can easily find a separating hyperplane (even with a few outliers),\nwe can say that the problem is linearly modelable; otherwise, more sophisticated non-linear\ntechniques must be taken into account.",
+    "page": 30
+  },
+  {
+    "text": "s must be taken into account.",
+    "page": 30
+  },
+  {
+    "text": "Logistic Regression\n[ 102 ]\nJust like for linear regression, it's possible to impose norm conditions on the weights. In\nparticular, the actual functional becomes:",
+    "page": 31
+  },
+  {
+    "text": "Logistic Regression\n[ 103 ]\nThe behavior is the same as explained in the previous chapter. Both produce a shrinkage,\nbut L1 forces sparsity. This can be controlled using the parameters penalty (whose values\ncan be L1 or L2) and C, which is the inverse regularization factor (1/alpha), so bigger values\nreduce the strength, while smaller ones (in particular less than 1) force the weights to move\ncloser to the origin. Moreover, L1 will prefer vertexes (where all but one components are\nnull), so it's a good idea to apply SelectFromModel in order to optimize the actual features\nafter shrinkage.\nStochastic gradient descent algorithms\nAfter discussing the basics of logistic regression, it's useful to introduce the\nSGDClassifier class , which implements a very famous algorithm that can be applied t",
+    "page": 32
+  },
+  {
+    "text": "g the basics of logistic regression, it's useful to introduce the\nSGDClassifier class , which implements a very famous algorithm that can be applied to\nseveral different loss functions. The idea behind stochastic gradient descent is iterating a\nweight update based on the gradient of loss function:\nHowever, instead of considering the whole dataset, the update procedure is applied on\nbatches randomly extracted from it. In the preceding formula, L is the loss function we want\nto minimize (as discussed in Chapter 2, Important Elements in Machine Learning) and gamma\n(eta0 in scikit-learn) is the learning rate, a parameter that can be constant or decayed while\nthe learning process proceeds. The learning_rate parameter can be also left with its\ndefault value (optimal), which is computed internall",
+    "page": 32
+  },
+  {
+    "text": "ecayed while\nthe learning process proceeds. The learning_rate parameter can be also left with its\ndefault value (optimal), which is computed internally according to the regularization\nfactor.\nThe process should end when the weights stop modifying or their variation keeps itself\nunder a selected threshold. The scikit-learn implementation uses the n_iter parameter to\ndefine the number of desired iterations.",
+    "page": 32
+  },
+  {
+    "text": "Logistic Regression\n[ 104 ]\nThere are many possible loss functions, but in this chapter, we consider only log and\nperceptron. Some of the other ones will be discussed in the next chapters. The former\nimplements a logistic regression, while the latter (which is also available as the autonomous\nclass Perceptron) is the simplest neural network, composed of a single layer of weights w,\na fixed constant called bias, and a binary output function:\nThe output function (which classifies in two classes) is:\nThe differences between a Perceptron and a LogisticRegression are the output\nfunction (sign versus sigmoid) and the training model (with the loss function). A\nperceptron, in fact, is normally trained by minimizing the mean square distance between\nthe actual value and prediction:\nJust like any oth",
+    "page": 33
+  },
+  {
+    "text": "unction). A\nperceptron, in fact, is normally trained by minimizing the mean square distance between\nthe actual value and prediction:\nJust like any other linear classifier, a perceptron is not able to solve nonlinear problems;\nhence, our example will be generated using the built-in function make_classification:\nfrom sklearn.datasets import make_classification\n>>> nb_samples = 500\n>>> X, Y = make_classification(n_samples=nb_samples, n_features=2,\nn_informative=2, n_redundant=0, n_clusters_per_class=1)",
+    "page": 33
+  },
+  {
+    "text": "Logistic Regression\n[ 105 ]\nIn this way, we can generate 500 samples split into two classes:",
+    "page": 34
+  },
+  {
+    "text": "Logistic Regression\n[ 106 ]\nThis problem, under a determined precision threshold, can be linearly solved, so our\nexpectations are equivalent for both Perceptron and LogisticRegression. In the latter\ncase, the training strategy is focused on maximizing the likelihood of a probability\ndistribution. Considering the dataset, the probability of a red sample to belong to class 0\nmust be greater than 0.5 (it's equal to 0.5 when z = 0, so when the point lays on the\nseparating hyperplane) and vice versa. On the other hand, a perceptron will adjust the\nhyperplane so that the dot product between a sample and the weights would be positive or\nnegative, according to the class. In the following figure, there's a geometrical representation\nof a perceptron (where the bias is 0):",
+    "page": 35
+  },
+  {
+    "text": "cording to the class. In the following figure, there's a geometrical representation\nof a perceptron (where the bias is 0):",
+    "page": 35
+  },
+  {
+    "text": "Logistic Regression\n[ 107 ]\nThe weight vector is orthogonal to the separating hyperplane, so that the discrimination can\nhappen only considering the sign of the dot product. An example of stochastic gradient\ndescent with perceptron loss (without L1/L2 constraints) is shown as follows:\nfrom sklearn.linear_model import SGDClassifier\n>>> sgd = SGDClassifier(loss='perceptron', learning_rate='optimal',\nn_iter=10)\n>>> cross_val_score(sgd, X, Y, scoring='accuracy', cv=10).mean()\n0.98595918367346935\nThe same result can be obtained by directly using the Perceptron class:\nfrom sklearn.linear_model import Perceptron\n>>> perc = Perceptron(n_iter=10)\n>>> cross_val_score(perc, X, Y, scoring='accuracy', cv=10).mean()\n0.98195918367346935\nFinding the optimal hyperparameters\nthrough grid search\nFinding the",
+    "page": 36
+  },
+  {
+    "text": "cross_val_score(perc, X, Y, scoring='accuracy', cv=10).mean()\n0.98195918367346935\nFinding the optimal hyperparameters\nthrough grid search\nFinding the best hyperparameters (called this because they influence the parameters\nlearned during the training phase) is not always easy and there are seldom good methods to\nstart from. The personal experience (a fundamental element) must be aided by an efficient\ntool such as GridSearchCV, which automates the training process of different models and\nprovides the user with optimal values using cross-validation.\nAs an example, we show how to use it to find the best penalty and strength factors for a\nlinear regression with the Iris toy dataset:\nimport multiprocessing\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import GridSearchCV\n>>",
+    "page": 36
+  },
+  {
+    "text": "egression with the Iris toy dataset:\nimport multiprocessing\nfrom sklearn.datasets import load_iris\nfrom sklearn.model_selection import GridSearchCV\n>>> iris = load_iris()\n>>> param_grid = [\n   {\n      'penalty': [ 'l1', 'l2' ],\n      'C': [ 0.5, 1.0, 1.5, 1.8, 2.0, 2.5]\n   }\n]",
+    "page": 36
+  },
+  {
+    "text": "Logistic Regression\n[ 108 ]\n>>> gs = GridSearchCV(estimator=LogisticRegression(),\nparam_grid=param_grid,\n   scoring='accuracy', cv=10, n_jobs=multiprocessing.cpu_count())\n>>> gs.fit(iris.data, iris.target)\nGridSearchCV(cv=10, error_score='raise',\n       estimator=LogisticRegression(C=1.0, class_weight=None, dual=False,\nfit_intercept=True,\n          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,\n          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,\n          verbose=0, warm_start=False),\n       fit_params={}, iid=True, n_jobs=8,\n       param_grid=[{'penalty': ['l1', 'l2'], 'C': [0.1, 0.2, 0.4, 0.5, 1.0,\n1.5, 1.8, 2.0, 2.5]}],\n       pre_dispatch='2*n_jobs', refit=True, return_train_score=True,\n       scoring='accuracy', verbose=0)\n>>> gs.best_estimator_",
+    "page": 37
+  },
+  {
+    "text": "5, 1.8, 2.0, 2.5]}],\n       pre_dispatch='2*n_jobs', refit=True, return_train_score=True,\n       scoring='accuracy', verbose=0)\n>>> gs.best_estimator_\nLogisticRegression(C=1.5, class_weight=None, dual=False,\nfit_intercept=True,\n          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,\n          penalty='l1', random_state=None, solver='liblinear', tol=0.0001,\n          verbose=0, warm_start=False)\n>>> cross_val_score(gs.best_estimator_, iris.data, iris.target,\nscoring='accuracy', cv=10).mean()\n0.96666666666666679\nIt's possible to insert into the param dictionary any parameter supported by the model with\na list of values. GridSearchCV will process in parallel and return the best estimator\n(through the instance variable best_estimator_, which is an instance of the same\nclassif",
+    "page": 37
+  },
+  {
+    "text": "archCV will process in parallel and return the best estimator\n(through the instance variable best_estimator_, which is an instance of the same\nclassifier specified through the parameter estimator).\nWhen working with parallel algorithms, scikit-learn provides the n_jobs\nparameter, which allows us to specify how many threads must be used.\nSetting n_jobs=multiprocessing.cpu_count() is useful to exploit all\nCPU cores available on the current machine.",
+    "page": 37
+  },
+  {
+    "text": "Logistic Regression\n[ 109 ]\nIn the next example, we're going to find the best parameters of an SGDClassifier trained\nwith perceptron loss. The dataset is plotted in the following figure:\nimport multiprocessing\nfrom sklearn.model_selection import GridSearchCV\n>>> param_grid = [\n   {\n       'penalty': [ 'l1', 'l2', 'elasticnet' ],\n       'alpha': [ 1e-5, 1e-4, 5e-4, 1e-3, 2.3e-3, 5e-3, 1e-2],\n       'l1_ratio': [0.01, 0.05, 0.1, 0.15, 0.25, 0.35, 0.5, 0.75, 0.8]\n   }\n]",
+    "page": 38
+  },
+  {
+    "text": "Logistic Regression\n[ 110 ]\n>>> sgd = SGDClassifier(loss='perceptron', learning_rate='optimal')\n>>> gs = GridSearchCV(estimator=sgd, param_grid=param_grid,\nscoring='accuracy', cv=10, n_jobs=multiprocessing.cpu_count())\n>>> gs.fit(X, Y)\nGridSearchCV(cv=10, error_score='raise',\n       estimator=SGDClassifier(alpha=0.0001, average=False,\nclass_weight=None, epsilon=0.1,\n       eta0=0.0, fit_intercept=True, l1_ratio=0.15,\n       learning_rate='optimal', loss='perceptron', n_iter=5, n_jobs=1,\n       penalty='l2', power_t=0.5, random_state=None, shuffle=True,\n       verbose=0, warm_start=False),\n       fit_params={}, iid=True, n_jobs=8,\n       param_grid=[{'penalty': ['l1', 'l2', 'elasticnet'], 'alpha': [1e-05,\n0.0001, 0.0005, 0.001, 0.0023, 0.005, 0.01], 'l1_ratio': [0.01, 0.05, 0.1,\n0.15, 0.25,",
+    "page": 39
+  },
+  {
+    "text": "_grid=[{'penalty': ['l1', 'l2', 'elasticnet'], 'alpha': [1e-05,\n0.0001, 0.0005, 0.001, 0.0023, 0.005, 0.01], 'l1_ratio': [0.01, 0.05, 0.1,\n0.15, 0.25, 0.35, 0.5, 0.75, 0.8]}],\n       pre_dispatch='2*n_jobs', refit=True, return_train_score=True,\n       scoring='accuracy', verbose=0)\n>>> gs.best_score_\n0.89400000000000002\n>>> gs.best_estimator_\nSGDClassifier(alpha=0.001, average=False, class_weight=None, epsilon=0.1,\n       eta0=0.0, fit_intercept=True, l1_ratio=0.1, learning_rate='optimal',\n       loss='perceptron', n_iter=5, n_jobs=1, penalty='elasticnet',\n       power_t=0.5, random_state=None, shuffle=True, verbose=0,\n       warm_start=False)\nClassification metrics\nA classification task can be evaluated in many different ways to achieve specific objectives.\nOf course, the most important m",
+    "page": 39
+  },
+  {
+    "text": ")\nClassification metrics\nA classification task can be evaluated in many different ways to achieve specific objectives.\nOf course, the most important metric is the accuracy, often expressed as:\nIn scikit-learn, it can be assessed using the built-in accuracy_score() function:\nfrom sklearn.metrics import accuracy_score\n>>> accuracy_score(Y_test, lr.predict(X_test))\n0.94399999999999995",
+    "page": 39
+  },
+  {
+    "text": "Logistic Regression\n[ 111 ]\nAnother very common approach is based on zero-one loss function, which we saw in\nChapter 2, Important Elements in Machine Learning, which is defined as the normalized\naverage of L0/1 (where 1 is assigned to misclassifications) over all samples. In the following\nexample, we show a normalized score (if it's close to 0, it's better) and then the same\nunnormalized value (which is the actual number of misclassifications):\nfrom sklearn.metrics import zero_one_loss\n>>> zero_one_loss(Y_test, lr.predict(X_test))\n0.05600000000000005\n>>> zero_one_loss(Y_test, lr.predict(X_test), normalize=False)\n7L\nA similar but opposite metric is the Jaccard similarity coefficient, defined as:\nThis index measures the similarity and is bounded between 0 (worst performances) and 1\n(best per",
+    "page": 40
+  },
+  {
+    "text": "ic is the Jaccard similarity coefficient, defined as:\nThis index measures the similarity and is bounded between 0 (worst performances) and 1\n(best performances). In the former case, the intersection is null, while in the latter, the\nintersection and union are equal because there are no misclassifications. In scikit-learn, the\nimplementation is:\nfrom sklearn.metrics import jaccard_similarity_score\n>>> jaccard_similarity_score(Y_test, lr.predict(X_test))\n0.94399999999999995",
+    "page": 40
+  },
+  {
+    "text": "Logistic Regression\n[ 112 ]\nThese measures provide a good insight into our classification algorithms. However, in\nmany cases, it's necessary to be able to differentiate between different kinds of\nmisclassifications (we're considering the binary case with the conventional notation: 0-\nnegative, 1-positive), because the relative weight is quite different. For this reason, we\nintroduce the following definitions:\nTrue positive: A positive sample correctly classified\nFalse positive: A negative sample classified as positive\nTrue negative: A negative sample correctly classified\nFalse negative: A positive sample classified as negative\nAt a glance, false positive and false negative can be considered as similar errors, but think\nabout a medical prediction: while a false positive can be easily discov",
+    "page": 41
+  },
+  {
+    "text": "lse positive and false negative can be considered as similar errors, but think\nabout a medical prediction: while a false positive can be easily discovered with further tests,\na false negative is often neglected, with repercussions following the consequences of this\naction. For this reason, it's useful to introduce the concept of a confusion matrix:",
+    "page": 41
+  },
+  {
+    "text": "Logistic Regression\n[ 113 ]\nIn scikit-learn, it's possible to build a confusion matrix using a built-in function. Let's\nconsider a generic logistic regression on a dataset X with labels Y:\n>>> X_train, X_test, Y_train, Y_test = train_test_split(X, Y,\ntest_size=0.25)\n>>> lr = LogisticRegression()\n>>> lr.fit(X_train, Y_train)\nLogisticRegression(C=1.0, class_weight=None, dual=False,\nfit_intercept=True,\n          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,\n          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,\n          verbose=0, warm_start=False)\nNow we can compute our confusion matrix and immediately see how the classifier is\nworking:\nfrom sklearn.metrics import confusion_matrix\n>>> cm = confusion_matrix(y_true=Y_test, y_pred=lr.predict(X_test))\ncm[::",
+    "page": 42
+  },
+  {
+    "text": "how the classifier is\nworking:\nfrom sklearn.metrics import confusion_matrix\n>>> cm = confusion_matrix(y_true=Y_test, y_pred=lr.predict(X_test))\ncm[::-1, ::-1]\n[[50  5]\n [ 2 68]]\nThe last operation is needed because scikit-learn adopts an inverse axle. However, in many\nbooks, the confusion matrix has true values on the main diagonal, so I preferred to invert\nthe axle.\nIn order to avoid mistakes, I suggest you visit the page at h t t p ://s c i k i t -\nl e a r n . o r g /s t a b l e /m o d u l e s /g e n e r a t e d /s k l e a r n . m e t r i c s . c o n f u s i o n _ m\na t r i x . h t m l , and check for true/false positive/negative position.\nSo we have five false negatives and two false positives. If needed, a further analysis can\nallow for the detection of the misclassifications to decid",
+    "page": 42
+  },
+  {
+    "text": "So we have five false negatives and two false positives. If needed, a further analysis can\nallow for the detection of the misclassifications to decide how to treat them (for example, if\ntheir variance overcomes a predefined threshold, it's possible to consider them as outliers\nand remove them).\nAnother useful direct measure is:",
+    "page": 42
+  },
+  {
+    "text": "Logistic Regression\n[ 114 ]\nThis is directly connected with the ability to capture the features that determine the\npositiveness of a sample, to avoid the misclassification as negative. In scikit-learn, the\nimplementation is:\nfrom sklearn.metrics import precision_score\n>>> precision_score(Y_test, lr.predict(X_test))\n0.96153846153846156\nIf you don't flip the confusion matrix, but want to get the same measures,\nit's necessary to add the pos_label=0 parameter to all metric score\nfunctions.\nThe ability to detect true positive samples among all the potential positives can be assessed\nusing another measure:\nThe scikit-learn implementation is:\nfrom sklearn.metrics import recall_score\n>>> recall_score(Y_test, lr.predict(X_test))\n0.90909090909090906\nIt's not surprising that we have a 90 percent reca",
+    "page": 43
+  },
+  {
+    "text": "klearn.metrics import recall_score\n>>> recall_score(Y_test, lr.predict(X_test))\n0.90909090909090906\nIt's not surprising that we have a 90 percent recall with 96 percent precision, because the\nnumber of false negatives (which impact recall) is proportionally higher than the number of\nfalse positives (which impact precision). A weighted harmonic mean between precision and\nrecall is provided by:",
+    "page": 43
+  },
+  {
+    "text": "Logistic Regression\n[ 115 ]\nA beta value equal to 1 determines the so-called F1 score, which is a perfect balance between\nthe two measures. A beta less than 1 gives more importance to precision and a value greater\nthan 1 gives more importance to recall. The following snippet shows how to implement it\nwith scikit-learn:\nfrom sklearn.metrics import fbeta_score\n>>> fbeta_score(Y_test, lr.predict(X_test), beta=1)\n0.93457943925233655\n>>> fbeta_score(Y_test, lr.predict(X_test), beta=0.75)\n0.94197437829691033\n>>> fbeta_score(Y_test, lr.predict(X_test), beta=1.25)\n0.92886270956048933\nFor F1 score, scikit-learn provides the function f1_score(), which is\nequivalent to fbeta_score() with beta=1.\nThe highest score is achieved by giving more importance to precision (which is higher),\nwhile the least on",
+    "page": 44
+  },
+  {
+    "text": "is\nequivalent to fbeta_score() with beta=1.\nThe highest score is achieved by giving more importance to precision (which is higher),\nwhile the least one corresponds to a recall predominance. FBeta is hence useful to have a\ncompact picture of the accuracy as a trade-off between high precision and a limited number\nof false negatives.\nROC curve\nThe ROC curve (or receiver operating characteristics) is a valuable tool to compare different\nclassifiers that can assign a score to their predictions. In general, this score can be \ninterpreted as a probability, so it's bounded between 0 and 1. The plane is structured like in\nthe following figure:",
+    "page": 44
+  },
+  {
+    "text": "Logistic Regression\n[ 116 ]\nThe x axis represents the increasing false positive rate (also known as specificity), while the\ny axis represents the true positive rate (also known as sensitivity). The dashed oblique line \nrepresents a perfectly random classifier, so all the curves below this threshold perform\nworse than a random choice, while the ones above it show better performances. Of course,\nthe best classifier has an ROC curve split into the segments [0, 0] - [0, 1] and [0, 1] - [1, 1],\nand our goal is to find algorithms whose performances should be as close as possible to this\nlimit. To show how to create a ROC curve with scikit-learn, we're going to train a model to\ndetermine the scores for the predictions (this can be achieved using the\ndecision_function() or predict_proba() methods)",
+    "page": 45
+  },
+  {
+    "text": "'re going to train a model to\ndetermine the scores for the predictions (this can be achieved using the\ndecision_function() or predict_proba() methods):\n>>> X_train, X_test, Y_train, Y_test = train_test_split(X, Y,\ntest_size=0.25)\n>>> lr = LogisticRegression()\n>>> lr.fit(X_train, Y_train)\nLogisticRegression(C=1.0, class_weight=None, dual=False,\nfit_intercept=True,\n          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,\n          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,\n          verbose=0, warm_start=False)\n>>> Y_scores = lr.decision_function(X_test)",
+    "page": 45
+  },
+  {
+    "text": "Logistic Regression\n[ 117 ]\nNow we can compute the ROC curve:\nfrom sklearn.metrics import roc_curve\n>>> fpr, tpr, thresholds = roc_curve(Y_test, Y_scores)\nThe output is made up of the increasing true and false positive rates and the decreasing\nthresholds (which isn't normally used for plotting the curve). Before proceeding, it's also\nuseful to compute the area under the curve (AUC), whose value is bounded between 0\n(worst performances) and 1 (best performances), with a perfectly random value\ncorresponding to 0.5:\nfrom sklearn.metrics import auc\n>>> auc(fpr, tpr)\n0.96961038961038959\nWe already know that our performances are rather good because the AUC is close to 1.\nNow we can plot the ROC curve using matplotlib. As this book is not dedicated to this\npowerful framework, I'm going to use a s",
+    "page": 46
+  },
+  {
+    "text": "the AUC is close to 1.\nNow we can plot the ROC curve using matplotlib. As this book is not dedicated to this\npowerful framework, I'm going to use a snippet that can be found in several examples:\nimport matplotlib.pyplot as plt\n>>> plt.figure(figsize=(8, 8))\n>>> plt.plot(fpr, tpr, color='red', label='Logistic regression (AUC: %.2f)'\n% auc(fpr, tpr))\n>>> plt.plot([0, 1], [0, 1], color='blue', linestyle='--')\n>>> plt.xlim([0.0, 1.0])\n>>> plt.ylim([0.0, 1.01])\n>>> plt.title('ROC Curve')\n>>> plt.xlabel('False Positive Rate')\n>>> plt.ylabel('True Positive Rate')\n>>> plt.legend(loc=\"lower right\")\n>>> plt.show()",
+    "page": 46
+  },
+  {
+    "text": "Logistic Regression\n[ 118 ]\nThe resulting ROC curve is the following plot:\nAs confirmed by the AUC, our ROC curve shows very good performance. In later chapters,\nwe're going to use the ROC curve to visually compare different algorithms. As an exercise,\nyou can try different parameters of the same model and plot all the ROC curves, to\nimmediately understand which setting is preferable.\nI suggest visiting h t t p ://m a t p l o t l i b . o r g , for further information and\ntutorials. Moreover, an extraordinary tool is Jupyter (h t t p ://j u p y t e r . o r g\n), which allows working with interactive notebooks, where you can\nimmediately try your code and visualize in-line plots.",
+    "page": 47
+  },
+  {
+    "text": "code and visualize in-line plots.",
+    "page": 47
+  },
+  {
+    "text": "Logistic Regression\n[ 119 ]\nSummary\nA linear model classifies samples using separating hyperplanes; hence, a problem is linearly\nseparable if it's possible to find a linear model whose accuracy overcomes a predetermined\nthreshold. Logistic regression is one of most famous linear classifiers, based on the principle\nof maximizing the probability of a sample belonging to the right class. Stochastic gradient\ndescent classifiers are a more generic family of algorithms, determined by the different loss\nfunction that is adopted. SGD allows partial fitting, particularly when the amount of data is\ntoo huge to be loaded in memory. A perceptron is a particular instance of SGD,\nrepresenting a linear neural network that cannot solve the XOR problem (for this reason,\nmulti-layer perceptrons became the f",
+    "page": 48
+  },
+  {
+    "text": "ticular instance of SGD,\nrepresenting a linear neural network that cannot solve the XOR problem (for this reason,\nmulti-layer perceptrons became the first choice for non-linear classification). However, in\ngeneral, its performance is comparable to a logistic regression model.\nAll classifier performances must be measured using different approaches, in order to be\nable to optimize their parameters or to change them when the results don't meet our\nrequirements. We discussed different metrics and, in particular, the ROC curve, which\ngraphically shows how the different classifiers are performing.\nIn the next chapter, we're going to discuss naive Bayes classifiers, which are another very\nfamous and powerful family of algorithms. Thanks to this simple approach, it's possible to\nbuild spam filteri",
+    "page": 48
+  },
+  {
+    "text": "ayes classifiers, which are another very\nfamous and powerful family of algorithms. Thanks to this simple approach, it's possible to\nbuild spam filtering systems and solve apparently complex problems using only\nprobabilities and the quality of results. Even after decades, it's still superior or comparable\nto much more complex solutions.",
+    "page": 48
+  },
+  {
+    "text": "6\nNaive Bayes\nNaive Bayes are a family of powerful and easy-to-train classifiers that determine the\nprobability of an outcome given a set of conditions using Bayes' theorem. In other words,\nthe conditional probabilities are inverted, so that the query can be expressed as a function of\nmeasurable quantities. The approach is simple, and the adjective \"naive\" has been attributed\nnot because these algorithms are limited or less efficient, but because of a fundamental\nassumption about the causal factors that we're going to discuss. Naive Bayes are multi-\npurpose classifiers and it's easy to find their application in many different contexts;\nhowever, their performance is particularly good in all those situations where the probability\nof a class is determined by the probabilities of some causal f",
+    "page": 49
+  },
+  {
+    "text": "r, their performance is particularly good in all those situations where the probability\nof a class is determined by the probabilities of some causal factors. A good example is\nnatural language processing, where a piece of text can be considered as a particular instance\nof a dictionary and the relative frequencies of all terms provide enough information to infer\na belonging class. We're going to discuss these concepts in later chapters. In this one, our\nexamples will be always generic to let the reader understand how to apply naive Bayes in\nvarious contexts.\nBayes' theorem\nLet's consider two probabilistic events A and B. We can correlate the marginal probabilities\nP(A) and P(B) with the conditional probabilities P(A|B) and P(B|A) using the product rule:",
+    "page": 49
+  },
+  {
+    "text": "arginal probabilities\nP(A) and P(B) with the conditional probabilities P(A|B) and P(B|A) using the product rule:",
+    "page": 49
+  },
+  {
+    "text": "Naive Bayes\n[ 121 ]\nConsidering that the intersection is commutative, the first members are equal; so we can\nderive Bayes' theorem:\nThis formula has very deep philosophical implications and it's a fundamental element of\nstatistical learning. First of all, let's consider the marginal probability P(A); this is normally a\nvalue that determines how probable a target event is, such as P(Spam) or P(Rain). As there\nare no other elements, this kind of probability is called Apriori, because it's often \ndetermined by mathematical considerations or simply by a frequency count. For example,\nimagine we want to implement a very simple spam filter and we've collected 100 emails.\nWe know that 30 are spam and 70 are regular. So we can say that P(Spam) = 0.3.\nHowever, we'd like to evaluate using some criter",
+    "page": 50
+  },
+  {
+    "text": "collected 100 emails.\nWe know that 30 are spam and 70 are regular. So we can say that P(Spam) = 0.3.\nHowever, we'd like to evaluate using some criteria (for simplicity, let's consider a single\none), for example, email text is shorter than 50 characters. Therefore, our query becomes:\nThe first term is similar to P(Spam) because it's the probability of spam given a certain\ncondition. For this reason, it's called a posteriori (in other words, it's a probability that we\ncan estimate after knowing some additional elements). On the right-hand side, we need to\ncalculate the missing values, but it's simple. Let's suppose that 35 emails have text shorter\nthan 50 characters, so P(Text < 50 chars) = 0.35. Looking only into our spam folder, we\ndiscover that only 25 spam emails have short text, so tha",
+    "page": 50
+  },
+  {
+    "text": "rter\nthan 50 characters, so P(Text < 50 chars) = 0.35. Looking only into our spam folder, we\ndiscover that only 25 spam emails have short text, so that P(Text < 50 chars|Spam) = 25/30 =\n0.83. The result is:\nSo, after receiving a very short email, there is a 71% probability that it's spam. Now, we can\nunderstand the role of P(Text < 50 chars|Spam); as we have actual data, we can measure how\nprobable is our hypothesis given the query. In other words, we have defined a likelihood\n(compare this with logistic regression), which is a weight between the Apriori probability\nand the a posteriori one (the term in the denominator is less important because it works as a\nnormalizing factor):",
+    "page": 50
+  },
+  {
+    "text": "se it works as a\nnormalizing factor):",
+    "page": 50
+  },
+  {
+    "text": "Naive Bayes\n[ 122 ]\nThe normalization factor is often represented by the Greek letter alpha, so the formula\nbecomes:\nThe last step is considering the case when there are more concurrent conditions (this is\nmore realistic in real-life problems):\nA common assumption is called conditional independence (in other words, the effects\nproduced by every cause are independent of each other) and this allows us to write a\nsimplified expression:\nNaive Bayes classifiers\nA naive Bayes classifier is called so because it's based on a naive condition, which implies\nthe conditional independence of causes. This can seem very difficult to accept in many\ncontexts where the probability of a particular feature is strictly correlated to another one.\nFor example, in spam filtering, a text shorter than 50 characters",
+    "page": 51
+  },
+  {
+    "text": "where the probability of a particular feature is strictly correlated to another one.\nFor example, in spam filtering, a text shorter than 50 characters can increase the probability\nof the presence of an image, or if the domain has been already blacklisted for sending the\nsame spam emails to million users, it's likely to find particular keywords. In other words,\nthe presence of a cause isn't normally independent from the presence of other ones.\nHowever, in Zhang H., The Optimality of Naive Bayes, AAAI 1, no. 2 (2004): 3, the author\nshowed that under particular conditions (not so rare to happen), different dependencies\nclears one another, and a naive Bayes classifier succeeds in achieving very high\nperformances even if its naiveness is violated.\nLet's consider a dataset:",
+    "page": 51
+  },
+  {
+    "text": "naive Bayes classifier succeeds in achieving very high\nperformances even if its naiveness is violated.\nLet's consider a dataset:",
+    "page": 51
+  },
+  {
+    "text": "Naive Bayes\n[ 123 ]\nEvery feature vector, for simplicity, will be represented as:\nWe need also a target dataset:\nHere, each y can belong to one of P different classes. Considering Bayes' theorem under\nconditional independence, we can write:\nThe values of the marginal Apriori probability P(y) and of the conditional probabilities\nP(xi|y) is obtained through a frequency count; therefore, given an input vector x, the\npredicted class is the one for which the a posteriori probability is maximum.\nNaive Bayes in scikit-learn\nscikit-learn implements three naive Bayes variants based on the same number of different\nprobabilistic distributions: Bernoulli, multinomial, and Gaussian. The first one is a binary\ndistribution, useful when a feature can be present or absent. The second one is a discrete\ndist",
+    "page": 52
+  },
+  {
+    "text": ", multinomial, and Gaussian. The first one is a binary\ndistribution, useful when a feature can be present or absent. The second one is a discrete\ndistribution and is used whenever a feature must be represented by a whole number (for\nexample, in natural language processing, it can be the frequency of a term), while the third\nis a continuous distribution characterized by its mean and variance.\nBernoulli naive Bayes\nIf X is random variable and is Bernoulli-distributed, it can assume only two values (for\nsimplicity, let's call them 0 and 1) and their probability is:",
+    "page": 52
+  },
+  {
+    "text": "Naive Bayes\n[ 124 ]\nTo try this algorithm with scikit-learn, we're going to generate a dummy dataset. Bernoulli\nnaive Bayes expects binary feature vectors; however, the class BernoulliNB has a\nbinarize parameter, which allows us to specify a threshold that will be used internally to\ntransform the features:\nfrom sklearn.datasets import make_classification\n>>> nb_samples = 300\n>>> X, Y = make_classification(n_samples=nb_samples, n_features=2,\nn_informative=2, n_redundant=0)\nWe have generated the bidimensional dataset shown in the following figure:",
+    "page": 53
+  },
+  {
+    "text": "Naive Bayes\n[ 125 ]\nWe have decided to use 0.0 as a binary threshold, so each point can be characterized by the\nquadrant where it's located. Of course, this is a rational choice for our dataset, but Bernoulli\nnaive Bayes is envisaged for binary feature vectors or continuous values, which can be\nprecisely split with a predefined threshold:\nfrom sklearn.naive_bayes import BernoulliNB\nfrom sklearn.model_selection import train_test_split\n>>> X_train, X_test, Y_train, Y_test = train_test_split(X, Y,\ntest_size=0.25)\n>>> bnb = BernoulliNB(binarize=0.0)\n>>> bnb.fit(X_train, Y_train)\n>>> bnb.score(X_test, Y_test)\n0.85333333333333339\nThe score is rather good, but if we want to understand how the binary classifier worked, it's\nuseful to see how the data has been internally binarized:",
+    "page": 54
+  },
+  {
+    "text": "r good, but if we want to understand how the binary classifier worked, it's\nuseful to see how the data has been internally binarized:",
+    "page": 54
+  },
+  {
+    "text": "Naive Bayes\n[ 126 ]\nNow, checking the naive Bayes predictions, we obtain:\n>>> data = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])\n>>> bnb.predict(data)\narray([0, 0, 1, 1])\nThis is exactly what we expected.\nMultinomial naive Bayes\nA multinomial distribution is useful to model feature vectors where each value represents,\nfor example, the number of occurrences of a term or its relative frequency. If the feature\nvectors have n elements and each of them can assume k different values with probability pk,\nthen:\nThe conditional probabilities P(xi|y) are computed with a frequency count (which\ncorresponds to applying a maximum likelihood approach), but in this case, it's important to\nconsider the alpha parameter (called Laplace smoothing factor). Its default value is 1.0 and\nit prevents the model from",
+    "page": 55
+  },
+  {
+    "text": "n this case, it's important to\nconsider the alpha parameter (called Laplace smoothing factor). Its default value is 1.0 and\nit prevents the model from setting null probabilities when the frequency is zero. It's possible\nto assign all non-negative values; however, larger values will assign higher probabilities to\nthe missing features and this choice could alter the stability of the model. In our example,\nwe're going to consider the default value of 1.0.\nFor our purposes, we're going to use DictVectorizer, already analyzed in Chapter 2 -\nImportant Elements in Machine Learning. There are automatic instruments to compute\nthe frequencies of terms, but we're going to discuss them later. Let's consider only two\nrecords: the first one representing a city, and the second one, the countryside. Our\nd",
+    "page": 55
+  },
+  {
+    "text": "but we're going to discuss them later. Let's consider only two\nrecords: the first one representing a city, and the second one, the countryside. Our\ndictionary contains hypothetical frequencies, as if the terms were extracted from a text\ndescription:\nfrom sklearn.feature_extraction import DictVectorizer\n>>> data = [\n   {'house': 100, 'street': 50, 'shop': 25, 'car': 100, 'tree': 20},\n   {'house': 5, 'street': 5, 'shop': 0, 'car': 10, 'tree': 500, 'river': 1}\n]",
+    "page": 55
+  },
+  {
+    "text": "Naive Bayes\n[ 127 ]\n>>> dv = DictVectorizer(sparse=False)\n>>> X = dv.fit_transform(data)\n>>> Y = np.array([1, 0])\n>>> X\narray([[ 100.,  100.,    0.,   25.,   50.,   20.],\n       [  10.,    5.,    1.,    0.,    5.,  500.]])\nNote that the term 'river' is missing from the first set, so it's useful to keep alpha equal to\n1.0 to give it a small probability. The output classes are 1 for city and 0 for the countryside.\nNow we can train a MultinomialNB instance:\nfrom sklearn.naive_bayes import MultinomialNB\n>>> mnb = MultinomialNB()\n>>> mnb.fit(X, Y)\nMultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)\nTo test the model, we create a dummy city with a river and a dummy countryside place\nwithout any river:\n>>> test_data = data = [\n   {'house': 80, 'street': 20, 'shop': 15, 'car': 70, 'tree': 1",
+    "page": 56
+  },
+  {
+    "text": "with a river and a dummy countryside place\nwithout any river:\n>>> test_data = data = [\n   {'house': 80, 'street': 20, 'shop': 15, 'car': 70, 'tree': 10, 'river':\n1},\n   {'house': 10, 'street': 5, 'shop': 1, 'car': 8, 'tree': 300, 'river': 0}\n]\n>>> mnb.predict(dv.fit_transform(test_data))\narray([1, 0])\nAs expected, the prediction is correct. Later on, when discussing some elements of natural\nlanguage processing, we're going to use multinomial naive Bayes for text classification with\nlarger corpora. Even if a multinomial distribution is based on the number of occurrences, it\ncan be used successfully with frequencies or more complex functions.",
+    "page": 56
+  },
+  {
+    "text": "Naive Bayes\n[ 128 ]\nGaussian naive Bayes\nGaussian naive Bayes is useful when working with continuous values whose probabilities\ncan be modeled using a Gaussian distribution:\nThe conditional probabilities P(xi|y) are also Gaussian distributed; therefore, it's necessary\nto estimate the mean and variance of each of them using the maximum likelihood approach.\nThis quite easy; in fact, considering the property of a Gaussian, we get:\nHere, the k index refers to the samples in our dataset and P(xi|y) is a Gaussian itself. By\nminimizing the inverse of this expression (in Russel S., Norvig P., Artificial Intelligence: A\nModern Approach, Pearson, there's a complete analytical explanation), we get the mean and\nvariance for each Gaussian associated with P(xi|y), and the model is hence trained.\nAs an e",
+    "page": 57
+  },
+  {
+    "text": "'s a complete analytical explanation), we get the mean and\nvariance for each Gaussian associated with P(xi|y), and the model is hence trained.\nAs an example, we compare Gaussian naive Bayes with logistic regression using the ROC\ncurves. The dataset has 300 samples with two features. Each sample belongs to a single\nclass:\nfrom sklearn.datasets import make_classification\n>>> nb_samples = 300\n>>> X, Y = make_classification(n_samples=nb_samples, n_features=2,\nn_informative=2, n_redundant=0)",
+    "page": 57
+  },
+  {
+    "text": "Naive Bayes\n[ 129 ]\nA plot of the dataset is shown in the following figure:\nNow we can train both models and generate the ROC curves (the Y scores for naive Bayes\nare obtained through the predict_proba method):\nfrom sklearn.naive_bayes import GaussianNB\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import roc_curve, auc\nfrom sklearn.model_selection import train_test_split\n>>> X_train, X_test, Y_train, Y_test = train_test_split(X, Y,\ntest_size=0.25)\n>>> gnb = GaussianNB()\n>>> gnb.fit(X_train, Y_train)\n>>> Y_gnb_score = gnb.predict_proba(X_test)\n>>> lr = LogisticRegression()",
+    "page": 58
+  },
+  {
+    "text": "Naive Bayes\n[ 130 ]\n>>> lr.fit(X_train, Y_train)\n>>> Y_lr_score = lr.decision_function(X_test)\n>>> fpr_gnb, tpr_gnb, thresholds_gnb = roc_curve(Y_test, Y_gnb_score[:, 1])\n>>> fpr_lr, tpr_lr, thresholds_lr = roc_curve(Y_test, Y_lr_score)\nThe resulting ROC curves (generated in the same way shown in the previous chapter) are\nshown in the following figure:",
+    "page": 59
+  },
+  {
+    "text": "Naive Bayes\n[ 131 ]\nNaive Bayes' performance is slightly better than logistic regression; however, the two\nclassifiers have similar accuracy and Area Under the Curve (AUC). It's interesting to \ncompare the performances of Gaussian and multinomial naive Bayes with the MNIST digit\ndataset. Each sample (belonging to 10 classes) is an 8 x 8 image encoded as an unsigned\ninteger (0-255); therefore, even if each feature doesn't represent an actual count, it can be\nconsidered as a sort of magnitude or frequency:\nfrom sklearn.datasets import load_digits\nfrom sklearn.model_selection import cross_val_score\n>>> digits = load_digits()\n>>> gnb = GaussianNB()\n>>> mnb = MultinomialNB()\n>>> cross_val_score(gnb, digits.data, digits.target, scoring='accuracy',\ncv=10).mean()\n0.81035375835678214\n>>> cross_val_",
+    "page": 60
+  },
+  {
+    "text": "()\n>>> mnb = MultinomialNB()\n>>> cross_val_score(gnb, digits.data, digits.target, scoring='accuracy',\ncv=10).mean()\n0.81035375835678214\n>>> cross_val_score(mnb, digits.data, digits.target, scoring='accuracy',\ncv=10).mean()\n0.88193962163008377\nMultinomial naive Bayes performs better than the Gaussian variant and the result is not\nreally surprising. In fact, each sample can be thought of as a feature vector derived from a\ndictionary of 64 symbols. The value can be the count of each occurrence, so a multinomial\ndistribution can better fit the data, while a Gaussian is slightly more limited by its mean and\nvariance.\nReferences\nRussel S., Norvig P., Artificial Intelligence: A Modern Approach, Pearson\nZhang H., The Optimality of Naive Bayes, AAAI 1, no. 2 (2004): 3\nPapoulis A., Probability, Rand",
+    "page": 60
+  },
+  {
+    "text": "., Artificial Intelligence: A Modern Approach, Pearson\nZhang H., The Optimality of Naive Bayes, AAAI 1, no. 2 (2004): 3\nPapoulis A., Probability, Random Variables and Stochastic Processes, McGraw-Hill",
+    "page": 60
+  },
+  {
+    "text": "Naive Bayes\n[ 132 ]\nSummary\nIn this chapter, we exposed the generic naive Bayes approach, starting from the Bayes'\ntheorem and its intrinsic philosophy. The naiveness of such algorithms is due to the choice\nto assume all the causes to be conditional independent. This means that each contribution is\nthe same in every combination and the presence of a specific cause cannot alter the\nprobability of the other ones. This is not so often realistic; however, under some\nassumptions, it's possible to show that internal dependencies clear each other so that the\nresulting probability appears unaffected by their relations.\nscikit-learn provides three naive Bayes implementations: Bernoulli, multinomial and\nGaussian. The only difference between them is in the probability distribution adopted. The\nfirst",
+    "page": 61
+  },
+  {
+    "text": "ve Bayes implementations: Bernoulli, multinomial and\nGaussian. The only difference between them is in the probability distribution adopted. The\nfirst one is a binary algorithm, particularly useful when a feature can be present or not.\nMultinomial assumes having feature vectors, where each element represents the number of\ntimes it appears (or, very often, its frequency). This technique is very efficient in natural\nlanguage processing or whenever the samples are composed starting from a common\ndictionary. Gaussian, instead, is based on a continuous distribution and it's suitable for\nmore generic classification tasks.\nIn the next chapter, we're going to introduce a new classification technique called support\nvector machines. These algorithms are very powerful for solving both linear and non-l",
+    "page": 61
+  },
+  {
+    "text": "going to introduce a new classification technique called support\nvector machines. These algorithms are very powerful for solving both linear and non-linear\nproblems. They're often the first choice for more complex scenarios because, despite their\nefficiency, the internal dynamics are very simple and they can be trained in a very short\ntime.",
+    "page": 61
+  },
+  {
+    "text": "7\nSupport Vector Machines\nIn this chapter, we're going to introduce another approach to classification using a family of\nalgorithms called support vector machines. They can work with both linear and non-linear\nscenarios, allowing high performance in many different contexts. Together with neural\nnetworks, SVMs probably represent the best choice for many tasks where it's not easy to\nfind out a good separating hyperplane. For example, for a long time, SVMs were the best\nchoice for MNIST dataset classification, thanks to the fact that they can capture very high\nnon-linear dynamics using a mathematical trick, without complex modifications in the\nalgorithm. In the first part, we're going to discuss the basics of linear SVM, which then will\nbe used for their non-linear extensions. We'll also disc",
+    "page": 62
+  },
+  {
+    "text": "lgorithm. In the first part, we're going to discuss the basics of linear SVM, which then will\nbe used for their non-linear extensions. We'll also discuss some techniques to control the\nnumber of parameters and, at the end, the application of support vector algorithms to\nregression problems.\nLinear support vector machines\nLet's consider a dataset of feature vectors we want to classify:\nFor simplicity, we assume it as a binary classification (in all the other cases, it's possible to\nuse automatically the one-versus-all strategy) and we set our class labels as -1 and 1:",
+    "page": 62
+  },
+  {
+    "text": "Support Vector Machines\n[ 134 ]\nOur goal is to find the best separating hyperplane, for which the equation is:\nIn the following figure, there's a bidimensional representation of such a hyperplane:\nIn this way, our classifier can be written as:",
+    "page": 63
+  },
+  {
+    "text": "Support Vector Machines\n[ 135 ]\nIn a realistic scenario, the two classes are normally separated by a margin with two\nboundaries where a few elements lie. Those elements are called support vectors. For a more\ngeneric mathematical expression, it's preferable to renormalize our dataset so that the\nsupport vectors will lie on two hyperplanes with equations:\nIn the following figure, there's an example with two support vectors. The dashed line is the\noriginal separating hyperplane:\nOur goal is to maximize the distance between these two boundary hyperplanes so as to\nreduce the probability of misclassification (which is higher when the distance is short, and\nthere aren't two well-defined blobs as in the previous figure).",
+    "page": 64
+  },
+  {
+    "text": "ort, and\nthere aren't two well-defined blobs as in the previous figure).",
+    "page": 64
+  },
+  {
+    "text": "Support Vector Machines\n[ 136 ]\nConsidering that the boundaries are parallel, the distance between them is defined by the\nlength of the segment perpendicular to both and connecting two points:\nConsidering the points as vectors, therefore, we have:\nNow, considering the boundary hyperplane equations, we get:",
+    "page": 65
+  }
+]
